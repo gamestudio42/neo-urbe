@@ -10,5 +10,5 @@
   "cover": "docs/screenshots/menu.jpg",
   "genre": "city-builder",
   "tech": ["TypeScript", "PixiJS", "Web Worker"],
-  "order": 1
+  "order": 2
 }
