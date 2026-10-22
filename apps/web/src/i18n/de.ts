@@ -266,6 +266,8 @@ export const de = {
     credits: 'Inspiriert von klassischen Stadtbau-Spielen. Eigener Code, eigene Kunst und Musik.',
     soundOn: 'Ton an',
     soundOff: 'Ton aus',
+    musicOn: 'Musik an',
+    musicOff: 'Musik aus',
   },
   boot: {
     graphics: 'Grafik wird vorbereitet…',

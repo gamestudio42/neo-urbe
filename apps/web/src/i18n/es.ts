@@ -266,6 +266,8 @@ export const es = {
     credits: 'Inspirado en los clásicos de simulación urbana. Código, arte y música originales.',
     soundOn: 'Sonido activado',
     soundOff: 'Sonido desactivado',
+    musicOn: 'Música activada',
+    musicOff: 'Música desactivada',
   },
   boot: {
     graphics: 'Preparando los gráficos…',

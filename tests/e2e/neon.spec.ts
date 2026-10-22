@@ -36,6 +36,28 @@ test('boots into Neo Urbe with the neon brand', async ({ page }) => {
   await expect(mark).toHaveAccessibleName('Game Studio 42');
 });
 
+test('stacks sound and music on the city, under the bar', async ({ page }) => {
+  await startNeonCity(page, 'neon-audio');
+  const sound = page.getByTestId('hud-sound');
+  const music = page.getByTestId('hud-music');
+  await expect(sound).toBeVisible();
+  await expect(music).toBeVisible();
+  await expect(sound).toHaveAccessibleName('Som ligado');
+  await expect(music).toHaveAccessibleName('Música ligada');
+  const soundBox = await sound.boundingBox();
+  const musicBox = await music.boundingBox();
+  const hudBox = await page.getByTestId('hud').boundingBox();
+  expect(soundBox && musicBox && hudBox).toBeTruthy();
+  expect(soundBox!.y).toBeGreaterThanOrEqual(hudBox!.y + hudBox!.height);
+  expect(musicBox!.y).toBeGreaterThanOrEqual(soundBox!.y + soundBox!.height);
+  expect(soundBox!.x).toBeGreaterThan(musicBox!.x - 8);
+  await music.click();
+  await expect(music).toHaveAccessibleName('Música desligada');
+  expect(await page.evaluate(() => window.__cityDebug?.musicState())).toMatchObject({
+    enabled: false,
+  });
+});
+
 test('reports the neon ruleset in the mirror stats', async ({ page }) => {
   await startNeonCity(page, 'neon-e2e');
   await expect(page.getByTestId('studio-mark')).toBeVisible();

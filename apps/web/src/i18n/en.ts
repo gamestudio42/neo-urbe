@@ -266,6 +266,8 @@ export const en = {
     credits: 'Inspired by classic city simulators. Original code, art and music.',
     soundOn: 'Sound on',
     soundOff: 'Sound off',
+    musicOn: 'Music on',
+    musicOff: 'Music off',
   },
   boot: {
     graphics: 'Preparing the graphics…',
