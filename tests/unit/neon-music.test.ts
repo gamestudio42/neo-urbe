@@ -34,6 +34,40 @@ describe('neon synthwave composer', () => {
     }
   });
 
+  it('keeps every voice in an audible octave', () => {
+    const range: Record<string, [number, number]> = {
+      bass: [36, 60],
+      pad: [48, 72],
+      lead: [64, 86],
+      arp: [72, 91],
+    };
+    for (const spec of Object.values(TRACKS)) {
+      for (let bar = 0; bar < 8; bar++) {
+        for (const note of composeBar(spec, bar, seeded(bar + 3))) {
+          const [low, high] = range[note.voice] as [number, number];
+          expect(note.midi).toBeGreaterThanOrEqual(low);
+          expect(note.midi).toBeLessThanOrEqual(high);
+          expect(midiToHz(note.midi)).toBeGreaterThan(60);
+        }
+      }
+    }
+  });
+
+  it('voices the tonic as a minor triad and the VI as a major triad', () => {
+    const triad = (bar: number) =>
+      voices(composeBar(TRACKS.menu, bar, seeded(1)), 'pad')
+        .map((note) => note.midi)
+        .sort((a, b) => a - b);
+    const tonic = triad(0);
+    const sixth = triad(1);
+    expect(tonic[1]! - tonic[0]!).toBe(3);
+    expect(tonic[2]! - tonic[0]!).toBe(7);
+    expect(sixth[1]! - sixth[0]!).toBe(4);
+    expect(sixth[2]! - sixth[0]!).toBe(7);
+    expect(tonic[0]! % 12).toBe(TRACKS.menu.key % 12);
+    expect(sixth[0]! % 12).toBe((TRACKS.menu.key + 8) % 12);
+  });
+
   it('lays down a pumping eighth-note bass on every bar', () => {
     const notes = composeBar(TRACKS.city, 0, seeded(7));
     const bass = voices(notes, 'bass');

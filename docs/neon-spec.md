@@ -181,7 +181,9 @@ water pass.
   `Theme` in the constructor.
 - `apps/neon` wraps `apps/web`'s `App` with `theme={neon} ruleset="neon"` and its own synthwave
   composer (`apps/neon/src/audio/composer.ts`, a pure bar generator tested in
-  `tests/unit/neon-music.test.ts`), so the shared board keeps mute and the audio bus.
+  `tests/unit/neon-music.test.ts`), so the shared board keeps mute and the audio bus. The loop is
+  i–VI–III–VII in natural minor. Bass starts at C2, the pad at C3, the lead at E4 and the
+  arpeggio at C5; a pitch class is never used as a MIDI note number.
 - Copy lives in the same five catalogues as Urbe; `apps/neon/src/i18n.ts` overrides the labels with
   cyberpunk vocabulary instead of translating Urbe literally.
 
