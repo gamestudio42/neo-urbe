@@ -20,6 +20,8 @@ const LOOKAHEAD_S = 1.2;
 const CROSSFADE_S = 2;
 const FADE_IN_S = 2.5;
 const FADE_OUT_S = 0.8;
+/** Level into the shared music bus. The board still applies its own master gain. */
+const MASTER_LEVEL = 0.5;
 /** Paused: about −6 dB and a darker filter. */
 const DUCK_GAIN = 0.5;
 const DUCK_CUTOFF = 900;
@@ -93,8 +95,9 @@ export class NeonMusic {
     this.crossfade(track);
     this.master.gain.cancelScheduledValues(this.context.currentTime);
     this.master.gain.setValueAtTime(0.0001, this.context.currentTime);
-    this.master.gain.exponentialRampToValueAtTime(0.32, this.context.currentTime + FADE_IN_S);
+    this.master.gain.exponentialRampToValueAtTime(MASTER_LEVEL, this.context.currentTime + FADE_IN_S);
     if (!this.timer) this.timer = setInterval(() => this.tick(), TICK_MS);
+    this.tick();
   }
 
   stop(): void {
@@ -125,7 +128,7 @@ export class NeonMusic {
     if (!ctx || !this.master || !this.filter) return;
     const now = ctx.currentTime;
     this.master.gain.cancelScheduledValues(now);
-    this.master.gain.setTargetAtTime(paused ? 0.32 * DUCK_GAIN : 0.32, now, DUCK_TIME_S);
+    this.master.gain.setTargetAtTime(paused ? MASTER_LEVEL * DUCK_GAIN : MASTER_LEVEL, now, DUCK_TIME_S);
     this.filter.frequency.setTargetAtTime(paused ? DUCK_CUTOFF : OPEN_CUTOFF, now, DUCK_TIME_S);
   }
 
@@ -215,9 +218,12 @@ export class NeonMusic {
     const ctx = this.context;
     const channel = this.channel;
     if (!ctx || !channel || !this.enabled) return;
+    const now = ctx.currentTime;
+    // After a suspended context or a throttled tab, restart from now instead of catching up.
+    if (channel.nextBarTime < now) channel.nextBarTime = now + 0.05;
     const spec = TRACKS[channel.track];
     const barLength = (BEATS_PER_BAR * 60) / spec.bpm;
-    while (channel.nextBarTime < ctx.currentTime + LOOKAHEAD_S) {
+    while (channel.nextBarTime < now + LOOKAHEAD_S) {
       const notes = composeBar(spec, channel.bar, channel.random);
       for (const note of notes) this.schedule(channel, note, barLength);
       channel.bar++;

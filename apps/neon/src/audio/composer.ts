@@ -5,7 +5,10 @@ import type { Random } from '@view/city';
  *
  * The shape mirrors the Urbe composer (one bar at a time, notes in MIDI, times in beats) but the
  * mood is different: natural minor, 100-110 bpm, a pumping eighth-note bass, a wide detuned pad,
- * a reverb lead hook on the second half of the bar and a gated snare on every backbeat.
+ * a high arpeggio and a lead hook on the second half of the bar.
+ *
+ * Pitch classes are not MIDI notes. Each voice is placed at or above its own floor, so the bass
+ * sits around C2 and the lead around E4 instead of falling below the audible range.
  */
 
 export type TrackId = 'menu' | 'city';
@@ -52,15 +55,33 @@ const EIGHTHS = 8;
 /** Natural minor: the synthwave default. */
 const MINOR = [0, 2, 3, 5, 7, 8, 10] as const;
 
-const CHORD = (...tones: number[]): Chord => ({ root: tones[0] as number, tones });
+const MINOR_TRIAD = [0, 3, 7] as const;
+const MAJOR_TRIAD = [0, 4, 7] as const;
 
-/** i - VI - III - VII in A minor: the classic synthwave loop. */
+/**
+ * Lowest MIDI note of a voice. A pitch class is placed in the octave that starts here, then
+ * chord tones stack above that root.
+ */
+const VOICE_FLOOR: Record<VoiceId, number> = {
+  bass: 36,
+  pad: 48,
+  lead: 64,
+  arp: 72,
+};
+
+/** i – VI – III – VII. Roots are semitones above the key; tones are above the chord root. */
 const MINOR_LOOP: readonly Chord[] = [
-  CHORD(0, 3, 7),
-  CHORD(8, 12, 15),
-  CHORD(3, 7, 10),
-  CHORD(10, 14, 17),
+  { root: 0, tones: MINOR_TRIAD },
+  { root: 8, tones: MAJOR_TRIAD },
+  { root: 3, tones: MAJOR_TRIAD },
+  { root: 10, tones: MAJOR_TRIAD },
 ];
+
+/** Pitch class `semitones` above C, placed in the octave that starts at `floor`. */
+function placed(semitones: number, floor: number): number {
+  const pitchClass = ((semitones % 12) + 12) % 12;
+  return floor + pitchClass;
+}
 
 export const TRACKS: Record<TrackId, TrackSpec> = {
   menu: {
@@ -90,21 +111,15 @@ export function midiToHz(midi: number): number {
   return 440 * 2 ** ((midi - 69) / 12);
 }
 
-/** Picks a scale tone near `octaveStart`, biased to chord tones on strong beats. */
-function pickTone(
-  random: Random,
-  spec: TrackSpec,
-  chord: Chord,
-  octave: number,
-  strong: boolean,
-): number {
-  const root = spec.key + chord.root + octave * 12;
+/** Picks a lead tone in the lead octave, biased to chord tones on strong beats. */
+function pickTone(random: Random, spec: TrackSpec, chord: Chord, strong: boolean): number {
+  const root = placed(spec.key + chord.root, VOICE_FLOOR.lead);
   if (strong) {
     const tone = chord.tones[Math.min(chord.tones.length - 1, Math.floor(random() * chord.tones.length))] as number;
     return root + tone;
   }
   const degree = spec.scale[Math.min(spec.scale.length - 1, Math.floor(random() * spec.scale.length))] as number;
-  return spec.key + chord.root + octave * 12 + degree;
+  return root + degree;
 }
 
 /**
@@ -114,7 +129,9 @@ function pickTone(
 export function composeBar(spec: TrackSpec, bar: number, random: Random): NoteEvent[] {
   const chord = spec.progression[bar % spec.progression.length] as Chord;
   const notes: NoteEvent[] = [];
-  const rootMidi = spec.key + chord.root - 12;
+  const bassRoot = placed(spec.key + chord.root, VOICE_FLOOR.bass);
+  const padRoot = placed(spec.key + chord.root, VOICE_FLOOR.pad);
+  const arpRoot = placed(spec.key + chord.root, VOICE_FLOOR.arp);
 
   // Bass: an eighth-note pulse on the root, an octave lift on the last eighth for the lift.
   for (let step = 0; step < EIGHTHS; step++) {
@@ -122,31 +139,31 @@ export function composeBar(spec: TrackSpec, bar: number, random: Random): NoteEv
     const lift = step === EIGHTHS - 1 ? 12 : 0;
     notes.push({
       voice: 'bass',
-      midi: rootMidi + lift,
+      midi: bassRoot + lift,
       beat,
       duration: 0.45,
       velocity: step % 2 === 0 ? 0.9 : 0.62,
     });
   }
 
-  // Pad: a held triad across the bar, voiced an octave above the bass.
+  // Pad: a held triad across the bar, an octave above the bass floor.
   for (const tone of chord.tones) {
     notes.push({
       voice: 'pad',
-      midi: spec.key + chord.root + tone,
+      midi: padRoot + tone,
       beat: 0,
       duration: BEATS_PER_BAR,
       velocity: 0.5,
     });
   }
 
-  // Arpeggio: high chord tones on the off-beats.
+  // Arpeggio: the same triad two octaves above the pad.
   for (let step = 0; step < EIGHTHS; step++) {
     if (random() >= spec.arpDensity) continue;
     const tone = chord.tones[Math.min(chord.tones.length - 1, Math.floor(random() * chord.tones.length))] as number;
     notes.push({
       voice: 'arp',
-      midi: spec.key + chord.root + tone + 24,
+      midi: arpRoot + tone,
       beat: step / 2,
       duration: 0.35,
       velocity: 0.32,
@@ -158,7 +175,7 @@ export function composeBar(spec: TrackSpec, bar: number, random: Random): NoteEv
     if (random() >= spec.leadDensity) continue;
     notes.push({
       voice: 'lead',
-      midi: pickTone(random, spec, chord, 1, step % 2 === 0),
+      midi: pickTone(random, spec, chord, step % 2 === 0),
       beat: step / 2,
       duration: 0.9,
       velocity: 0.4,
