@@ -13,6 +13,19 @@
   No install. Interface in English, Portuguese, Spanish, French and German.
 </p>
 
+<p align="center">
+  <a href="https://gamestudio42.github.io/neo-urbe/"><img src="https://img.shields.io/badge/Play-2de2e6?style=for-the-badge&labelColor=05070d&color=2de2e6" alt="Play Neo Urbe"></a>
+  <a href="https://github.com/gamestudio42/neo-urbe"><img src="https://img.shields.io/badge/Game_Studio_42-05070d?style=for-the-badge&labelColor=05070d&color=ff3ea5" alt="Game Studio 42"></a>
+</p>
+
+## Play
+
+|               |                                                                             |
+| ------------- | --------------------------------------------------------------------------- |
+| **Live game** | [gamestudio42.github.io/neo-urbe](https://gamestudio42.github.io/neo-urbe/) |
+| **Hotkeys**   | `R` road · `1–6` zones · `E` power · `T` water · `P` pause · `M` sound      |
+| **Language**  | English, Portuguese, Spanish, French, German · code and docs in English     |
+
 ## Why Neo Urbe
 
 - **Play in the browser.** Found a city. Nothing to download.
@@ -22,8 +35,6 @@
 - **A mayor's desk.** Taxes, department funding, charts, thematic maps and a tile inspector that tells you _why_ a lot is not growing.
 - **Original soundtrack.** Synthwave, synthesized on the fly.
 - **Your city stays with you.** Autosave in the browser, plus export and import of `.neon.json` files.
-
-Hotkeys: `R` road · `1–6` zones · `E` power · `T` water · `P` pause · `M` sound.
 
 ## Develop
 
