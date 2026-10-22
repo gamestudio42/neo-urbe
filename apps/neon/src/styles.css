@@ -82,6 +82,58 @@ body::after {
     0 0 12px rgba(45, 226, 230, 0.45);
 }
 
+/* Studio seal. The phosphor green is the studio colour, not a city token. */
+.studio-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+}
+
+.studio-mark img {
+  display: block;
+  width: 28px;
+  height: 28px;
+}
+
+.studio-mark:hover,
+.studio-mark:focus-visible {
+  color: var(--text);
+}
+
+/* The card is taller than a short window, so the credit stays in the corner instead of the footer. */
+.menu-chrome:has(.studio-mark) {
+  left: 16px;
+  justify-content: space-between;
+}
+
+.studio-mark-menu {
+  padding: 4px 12px 4px 4px;
+  background: rgba(8, 14, 24, 0.74);
+  border: 1px solid rgba(45, 226, 230, 0.22);
+  border-radius: 10px;
+  backdrop-filter: blur(6px);
+}
+
+.boot-screen .studio-mark {
+  margin-top: 6px;
+}
+
+/* Sits in the HUD, after Menu. The map stays clear of a floating seal. */
+.studio-mark-play {
+  flex: none;
+  margin-left: 8px;
+}
+
+.studio-mark-play img {
+  width: 30px;
+  height: 30px;
+}
+
 .neon-tagline {
   margin: 0;
   color: var(--muted);

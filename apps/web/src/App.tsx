@@ -1,6 +1,6 @@
 import type { Theme } from '@theme/core';
 import type { MusicFactory } from './audio/sound';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useStrings } from './i18n';
 import { GameSession } from './state/session';
 import { useStore } from './state/store';
@@ -29,9 +29,14 @@ export interface AppProps {
   ruleset?: 'classic' | 'neon';
   /** Music engine factory; reskins inject their own composer. */
   music?: MusicFactory;
+  /**
+   * Studio credit. Called once per surface so boot, menu and play each get
+   * their own element. The classic shell leaves it unset.
+   */
+  credit?: (placement: 'boot' | 'menu' | 'play') => ReactNode;
 }
 
-export function App({ theme, menuSeed, ruleset, music }: AppProps = {}) {
+export function App({ theme, menuSeed, ruleset, music, credit }: AppProps = {}) {
   const hostRef = useRef<HTMLDivElement>(null);
   const [session, setSession] = useState<GameSession | null>(null);
 
@@ -49,17 +54,23 @@ export function App({ theme, menuSeed, ruleset, music }: AppProps = {}) {
       <div ref={hostRef} className="viewport" />
       {session ? (
         <>
-          <Screens session={session} />
-          <BootScreen session={session} />
+          <Screens session={session} credit={credit} />
+          <BootScreen session={session} credit={credit?.('boot')} />
         </>
       ) : (
-        <BootView boot={{ step: 'graphics', progress: 0 }} />
+        <BootView boot={{ step: 'graphics', progress: 0 }} credit={credit?.('boot')} />
       )}
     </div>
   );
 }
 
-function Screens({ session }: { session: GameSession }) {
+function Screens({
+  session,
+  credit,
+}: {
+  session: GameSession;
+  credit?: AppProps['credit'];
+}) {
   const booted = useStore(session.ui, (s) => s.boot.step === 'done');
   const screen = useStore(session.ui, (s) => s.screen);
   const panel = useStore(session.ui, (s) => s.panel);
@@ -67,7 +78,11 @@ function Screens({ session }: { session: GameSession }) {
   if (screen === 'menu') {
     return (
       <>
-        <MainMenu session={session} extra={<SavedCities session={session} />} />
+        <MainMenu
+          session={session}
+          extra={<SavedCities session={session} />}
+          credit={credit?.('menu')}
+        />
         <Toasts session={session} />
       </>
     );
@@ -75,7 +90,7 @@ function Screens({ session }: { session: GameSession }) {
   return (
     <>
       <PauseOverlay session={session} />
-      <Hud session={session} />
+      <Hud session={session} credit={credit?.('play')} />
       <Toolbar session={session} />
       <Minimap session={session} />
       <TileReadout session={session} />

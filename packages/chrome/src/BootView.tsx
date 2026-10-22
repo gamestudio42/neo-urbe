@@ -7,6 +7,7 @@ export function BootView({
   step,
   testId = 'boot-screen',
   children,
+  footer,
 }: {
   stepLabel: string;
   progress: number;
@@ -14,6 +15,8 @@ export function BootView({
   step?: string;
   testId?: string;
   children?: ReactNode;
+  /** Optional credit under the progress bar. Reskins use it for the studio mark. */
+  footer?: ReactNode;
 }) {
   const percent = Math.round(progress * 100);
   return (
@@ -36,6 +39,7 @@ export function BootView({
       >
         <div className="boot-progress-fill" style={{ width: `${percent}%` }} />
       </div>
+      {footer}
     </div>
   );
 }

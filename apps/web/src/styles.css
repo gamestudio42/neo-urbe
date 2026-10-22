@@ -369,6 +369,12 @@ input[type='range'] {
   gap: 10px;
 }
 
+.menu-chrome-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .menu-locale {
   margin: 0;
   min-width: 148px;

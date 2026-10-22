@@ -13,7 +13,16 @@ function randomSeed(): string {
   return Math.floor(Math.random() * 1_000_000).toString(36);
 }
 
-export function MainMenu({ session, extra }: { session: GameSession; extra?: ReactNode }) {
+export function MainMenu({
+  session,
+  extra,
+  credit,
+}: {
+  session: GameSession;
+  extra?: ReactNode;
+  /** Studio credit in the menu corner. The classic shell leaves it empty. */
+  credit?: ReactNode;
+}) {
   const t = useStrings(session.ui);
   const m = t.menu;
   const muted = useStore(session.ui, (s) => s.muted);
@@ -68,13 +77,16 @@ export function MainMenu({ session, extra }: { session: GameSession; extra?: Rea
   return (
     <div className="main-menu" data-testid="main-menu">
       <div className="menu-chrome">
-        <LocaleSelect session={session} className="menu-locale" />
-        <SoundToggle
-          muted={muted}
-          onToggle={() => session.setMuted(!muted)}
-          soundOn={m.soundOn}
-          soundOff={m.soundOff}
-        />
+        {credit}
+        <div className="menu-chrome-actions">
+          <LocaleSelect session={session} className="menu-locale" />
+          <SoundToggle
+            muted={muted}
+            onToggle={() => session.setMuted(!muted)}
+            soundOn={m.soundOn}
+            soundOff={m.soundOff}
+          />
+        </div>
       </div>
       <div className="menu-card">
         <h1 className="menu-title">
