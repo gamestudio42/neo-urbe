@@ -48,6 +48,32 @@
   </a>
 </p>
 
+## The maps
+
+<p align="center">
+  <img src="docs/screenshots/underground.jpg" alt="Water pipes, pumps and the fiber cable in the underground view" width="920">
+</p>
+
+<p align="center">Water pipes, pumps and the fiber cable share the underground view.</p>
+
+<p align="center">
+  <img src="docs/screenshots/data.jpg" alt="The data map, magenta on linked lots and red on lots outside the network" width="920">
+</p>
+
+<p align="center">The data map grows along fiber and buildings from the supplying datacenter.</p>
+
+<p align="center">
+  <img src="docs/screenshots/coverage.jpg" alt="Health coverage around the hospital" width="920">
+</p>
+
+<p align="center">Health coverage around the hospital.</p>
+
+<p align="center">
+  <img src="docs/screenshots/pollution.jpg" alt="Pollution around industry and the power plant" width="920">
+</p>
+
+<p align="center">Pollution around industry and the power plant.</p>
+
 ## Why Neo Urbe
 
 - **Play in the browser.** Open the link and found a city. Nothing to download.
