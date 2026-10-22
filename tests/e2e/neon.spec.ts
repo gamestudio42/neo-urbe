@@ -30,10 +30,15 @@ async function startNeonCity(page: import('@playwright/test').Page, seed: string
 test('boots into Neo Urbe with the neon brand', async ({ page }) => {
   await expect(page.getByTestId('main-menu')).toBeVisible();
   await expect(page.locator('body')).toContainText(/Neo Urbe|NEO URBE/);
+  const mark = page.getByTestId('main-menu').getByTestId('studio-mark');
+  await expect(mark).toBeVisible();
+  await expect(mark).toHaveAttribute('href', 'https://gamestudio42.github.io/');
+  await expect(mark).toHaveAccessibleName('Game Studio 42');
 });
 
 test('reports the neon ruleset in the mirror stats', async ({ page }) => {
   await startNeonCity(page, 'neon-e2e');
+  await expect(page.getByTestId('studio-mark')).toBeVisible();
   const stats = await page.evaluate(() => window.__cityDebug?.getStats() ?? null);
   expect(stats).not.toBeNull();
   expect(stats?.neon).toBeDefined();

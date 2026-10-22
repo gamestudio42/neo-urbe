@@ -3,6 +3,7 @@ import { App as UrbeApp } from '@neon/web/App';
 import { neon } from '@theme/neon';
 import { neonMusicFactory } from './audio/adapter';
 import { applyNeonCopy } from './i18n';
+import { StudioMark } from './StudioMark';
 
 /** Synthwave instead of the Urbe lo-fi player; the shared board keeps mute and the bus. */
 const music: MusicFactory = (ctx, bus, noise) => neonMusicFactory(ctx, bus, noise);
@@ -17,5 +18,13 @@ for (const locale of ['en', 'pt-BR', 'es', 'fr', 'de'] as const) applyNeonCopy(l
  * end-to-end tests keep working. Only the art direction, the copy and the ruleset change.
  */
 export function App() {
-  return <UrbeApp theme={neon} menuSeed="neon-menu" ruleset="neon" music={music} />;
+  return (
+    <UrbeApp
+      theme={neon}
+      menuSeed="neon-menu"
+      ruleset="neon"
+      music={music}
+      credit={(placement) => <StudioMark placement={placement} />}
+    />
+  );
 }
