@@ -5,6 +5,7 @@ import { useStrings } from './i18n';
 import { GameSession } from './state/session';
 import { useStore } from './state/store';
 import { BootScreen, BootView } from './ui/BootScreen';
+import { CityAudio } from './ui/CityAudio';
 import { BudgetPanel } from './ui/BudgetPanel';
 import { ChartsPanel } from './ui/ChartsPanel';
 import { Hud } from './ui/Hud';
@@ -91,6 +92,7 @@ function Screens({
     <>
       <PauseOverlay session={session} />
       <Hud session={session} credit={credit?.('play')} />
+      <CityAudio session={session} />
       <Toolbar session={session} />
       <Minimap session={session} />
       <TileReadout session={session} />

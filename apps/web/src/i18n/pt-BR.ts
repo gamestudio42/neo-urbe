@@ -267,6 +267,8 @@ export const ptBR = {
     credits: 'Inspirado nos clássicos de simulação urbana. Código, arte e música originais.',
     soundOn: 'Som ligado',
     soundOff: 'Som desligado',
+    musicOn: 'Música ligada',
+    musicOff: 'Música desligada',
   },
   boot: {
     graphics: 'Preparando os gráficos…',
