@@ -1,0 +1,240 @@
+import {
+  Infra,
+  NEON_DATA,
+  PLACEABLE_SPECS,
+  ZoneDensity,
+  ZoneType,
+  type BuildingRecord,
+} from '@city/shared';
+import {
+  SIM_PRESETS,
+  SimulationEngine,
+  createEngine,
+  dataSupply,
+  flatCity,
+  hashState,
+  maxLevel,
+  neonData,
+  neonMaxLevel,
+} from '@city/simulation';
+import { describe, expect, it } from 'vitest';
+
+/** A small flat neon city. Power comes from a wind turbine placed per test. */
+function city(seed = 'neon-data'): SimulationEngine {
+  const e = createEngine({
+    seed,
+    size: 24,
+    ruleset: 'neon',
+    terrain: { flat: true, water: 0, hills: 0, forest: 0, rivers: 0 },
+    funds: 100_000,
+  });
+  e.disastersEnabled = false;
+  return e;
+}
+
+/** A commercial lot with no data flag, so the solver is what sets `linked`. */
+function shop(e: SimulationEngine, x: number, y: number, level: number): BuildingRecord {
+  return e.buildings.add({
+    kind: 'commercial',
+    x,
+    y,
+    w: 1,
+    h: 1,
+    level,
+    capacity: 20,
+    occupancy: 4,
+    condition: 100,
+    age: 0,
+    abandoned: false,
+    emptyMonths: 0,
+    variant: 0,
+    powered: false,
+    watered: false,
+    offline: 0,
+    attractiveness: 0,
+  });
+}
+
+/** Wind turbine plus the edge node on its east side. */
+function feed(e: SimulationEngine, x: number, y: number): void {
+  expect(e.execute({ type: 'place', kind: 'windTurbine', x, y }).ok).toBe(true);
+  expect(e.execute({ type: 'place', kind: 'edgeNode', x: x + 1, y }).ok).toBe(true);
+}
+
+describe('neon data network', () => {
+  it('keeps the published costs and the level-5 demand table', () => {
+    expect(PLACEABLE_SPECS.datacenter.cost).toBe(NEON_DATA.datacenterCost);
+    expect(PLACEABLE_SPECS.edgeNode.cost).toBe(NEON_DATA.edgeNodeCost);
+    expect(neonData('residential', 5)).toBe(14);
+    expect(neonData('commercial', 5)).toBe(48);
+    expect(neonData('industrial', 5)).toBe(24);
+    // 48 * 1.4^2 = 94.08, rounded. One edge node (80) cannot feed a level-7 shop.
+    expect(neonData('commercial', 7)).toBe(94);
+  });
+
+  it('caps a neon lot at level 2 without data and leaves the classic cap alone', () => {
+    expect(neonMaxLevel(ZoneDensity.Dense, true, true, 5, false)).toBe(2);
+    expect(neonMaxLevel(ZoneDensity.Dense, true, true, 5, true)).toBe(7);
+    expect(neonMaxLevel(ZoneDensity.Light, true, true, 3, false)).toBe(2);
+    expect(maxLevel(ZoneDensity.Dense, true, true, false)).toBe(2);
+    expect(maxLevel(ZoneDensity.Dense, true, false, false)).toBe(5);
+  });
+
+  it('links a block through fiber and drops it when the cable is cut', () => {
+    const e = city();
+    feed(e, 2, 5);
+    expect(e.execute({ type: 'fiber', x0: 4, y0: 5, x1: 8, y1: 5 }).ok).toBe(true);
+    const block = shop(e, 8, 5, 1);
+    e.execute({
+      type: 'zone',
+      zone: ZoneType.Commercial,
+      density: ZoneDensity.Dense,
+      x0: 9,
+      y0: 5,
+      x1: 9,
+      y1: 5,
+    });
+    e.refreshUtilities();
+    expect(block.linked).toBe(true);
+    expect(e.world.linked[e.world.index(9, 5)]).toBe(1);
+    expect(e.world.linked[e.world.index(10, 5)]).toBe(0);
+
+    expect(
+      e.execute({ type: 'demolish', underground: true, x0: 6, y0: 5, x1: 6, y1: 5 }).ok,
+    ).toBe(true);
+    expect(e.world.hasInfra(e.world.index(6, 5), Infra.Fiber)).toBe(false);
+    e.refreshUtilities();
+    expect(block.linked).toBe(false);
+    expect(e.world.linked[e.world.index(8, 5)]).toBe(0);
+    expect(e.world.linked[e.world.index(9, 5)]).toBe(0);
+  });
+
+  it('lets one road tile pass the link and stops at two', () => {
+    const e = city();
+    feed(e, 2, 8);
+    e.execute({ type: 'road', x0: 6, y0: 8, x1: 6, y1: 8 });
+    e.execute({ type: 'fiber', x0: 4, y0: 8, x1: 5, y1: 8 });
+    e.execute({ type: 'fiber', x0: 7, y0: 8, x1: 8, y1: 8 });
+    const across = shop(e, 8, 8, 1);
+    e.refreshUtilities();
+    expect(across.linked).toBe(true);
+
+    feed(e, 2, 12);
+    e.execute({ type: 'road', x0: 6, y0: 12, x1: 7, y1: 12 });
+    e.execute({ type: 'fiber', x0: 4, y0: 12, x1: 5, y1: 12 });
+    e.execute({ type: 'fiber', x0: 8, y0: 12, x1: 9, y1: 12 });
+    const blocked = shop(e, 9, 12, 1);
+    e.refreshUtilities();
+    expect(blocked.linked).not.toBe(true);
+    expect(e.world.linked[e.world.index(9, 12)]).toBe(0);
+  });
+
+  it('drops datacenter supply without power and without cooling water', () => {
+    const dry = city('dry-hall');
+    expect(dry.execute({ type: 'place', kind: 'datacenter', x: 5, y: 4 }).ok).toBe(true);
+    dry.refreshUtilities();
+    const unpowered = dry.buildings.ofKind('datacenter')[0];
+    expect(unpowered).toBeDefined();
+    expect(dataSupply(unpowered!)).toBe(0);
+    expect(dry.stats().neon?.data.supply).toBe(0);
+
+    const cooled = city('cooled-hall');
+    expect(cooled.execute({ type: 'place', kind: 'windTurbine', x: 4, y: 4 }).ok).toBe(true);
+    expect(cooled.execute({ type: 'place', kind: 'datacenter', x: 5, y: 4 }).ok).toBe(true);
+    cooled.refreshUtilities();
+    const hall = cooled.buildings.ofKind('datacenter')[0];
+    expect(hall?.powered).toBe(true);
+    expect(hall?.watered).toBe(false);
+    expect(cooled.stats().neon?.data.supply).toBe(NEON_DATA.datacenterSupplyDry);
+
+    // The hall is 2×2 at (5,4), so a well on its south edge cools it.
+    expect(cooled.execute({ type: 'place', kind: 'well', x: 5, y: 6 }).ok).toBe(true);
+    cooled.refreshUtilities();
+    expect(cooled.buildings.ofKind('datacenter')[0]?.watered).toBe(true);
+    expect(cooled.stats().neon?.data.supply).toBe(NEON_DATA.datacenterSupply);
+  });
+
+  it('refuses a level-7 shop on a single edge node', () => {
+    const e = city('tower');
+    feed(e, 2, 4);
+    e.execute({ type: 'fiber', x0: 4, y0: 4, x1: 6, y1: 4 });
+    const tower = shop(e, 6, 4, 7);
+    e.refreshUtilities();
+    expect(neonData('commercial', 7)).toBeGreaterThan(NEON_DATA.edgeNodeSupply);
+    expect(tower.linked).not.toBe(true);
+    expect(e.world.linked[e.world.index(6, 4)]).toBe(0);
+    expect(e.stats().neon?.data.supply).toBe(NEON_DATA.edgeNodeSupply);
+    expect(e.stats().neon?.data.served).toBe(0);
+  });
+
+  it('serves the nearer shop when bandwidth is short', () => {
+    const e = city('nearest');
+    feed(e, 2, 4);
+    e.execute({ type: 'fiber', x0: 4, y0: 4, x1: 12, y1: 4 });
+    const near = shop(e, 6, 4, 5);
+    const far = shop(e, 11, 4, 5);
+    e.refreshUtilities();
+    expect(near.linked).toBe(true);
+    expect(far.linked).not.toBe(true);
+    expect(e.world.linked[e.world.index(6, 4)]).toBe(1);
+    expect(e.world.linked[e.world.index(11, 4)]).toBe(0);
+    expect(e.stats().neon?.data.demand).toBe(96);
+    expect(e.stats().neon?.data.served).toBe(0.5);
+  });
+
+  it('rejects fiber in a classic city and omits the link layer', () => {
+    const e = flatCity('classic-fiber', 16);
+    const placed = e.execute({ type: 'place', kind: 'park', x: 2, y: 2 });
+    expect(placed.ok).toBe(true);
+    const fiber = e.execute({ type: 'fiber', x0: 1, y0: 1, x1: 4, y1: 1 });
+    expect(fiber.ok).toBe(false);
+    expect(e.world.hasInfra(e.world.index(2, 1), Infra.Fiber)).toBe(false);
+    const snap = e.serialize();
+    expect(snap.layers.linked).toBeUndefined();
+    expect(snap.ruleset).toBe('classic');
+    for (const b of snap.buildings) expect('linked' in b).toBe(false);
+    expect(e.stats().neon).toBeUndefined();
+  });
+
+  it('gives the neon preset a cooled datacenter on the fiber spine', () => {
+    const { engine } = SIM_PRESETS['neon-balanced']!.create('preset-data', 64);
+    engine.refreshUtilities();
+    const hall = engine.buildings.ofKind('datacenter')[0];
+    expect(hall).toBeDefined();
+    expect(hall?.powered).toBe(true);
+    expect(hall?.watered).toBe(true);
+    expect(engine.stats().neon?.data.supply).toBe(NEON_DATA.datacenterSupply);
+    let fibers = 0;
+    for (let i = 0; i < engine.world.tileCount; i++) {
+      if (engine.world.hasInfra(i, Infra.Fiber)) fibers++;
+    }
+    expect(fibers).toBeGreaterThan(40);
+  });
+
+  it('hashes the same city twice and round-trips the link layer', () => {
+    const script = (seed: string) => {
+      const e = city(seed);
+      feed(e, 2, 3);
+      e.execute({ type: 'fiber', x0: 4, y0: 3, x1: 8, y1: 3 });
+      shop(e, 8, 3, 1);
+      e.refreshUtilities();
+      return e;
+    };
+    const a = script('same-data');
+    const b = script('same-data');
+    expect(hashState(a)).toBe(hashState(b));
+
+    const snap = a.serialize();
+    expect(snap.layers.linked).toBeDefined();
+    const restored = SimulationEngine.fromSnapshot(snap);
+    expect(hashState(restored)).toBe(hashState(a));
+    expect(restored.world.linked[restored.world.index(8, 3)]).toBe(1);
+
+    const stale = a.serialize();
+    delete stale.layers.linked;
+    stale.networksDirty = false;
+    const loaded = SimulationEngine.fromSnapshot(stale);
+    expect(loaded.networksDirty).toBe(true);
+    expect(loaded.world.linked[loaded.world.index(8, 3)]).toBe(0);
+  });
+});

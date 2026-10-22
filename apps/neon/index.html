@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Neo Urbe: raise a neon skyline, keep an unstable grid alive and keep the megacorps out."
+    />
+    <meta name="theme-color" content="#05070d" />
+    <meta property="og:title" content="Neo Urbe — jack into the city" />
+    <meta
+      property="og:description"
+      content="A cyberpunk city builder: unstable power grids, megacorporations, ICE, drone lanes and neon spires."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://gamestudio42.github.io/neon/" />
+    <meta property="og:image" content="https://gamestudio42.github.io/neon/og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Neo Urbe — jack into the city" />
+    <meta
+      name="twitter:description"
+      content="A cyberpunk city builder: unstable power grids, megacorporations, ICE, drone lanes and neon spires."
+    />
+    <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
+    <title>Neo Urbe — jack into the city</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #05070d;
+      }
+      .static-splash {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        background: radial-gradient(circle at 50% 45%, #10203a 0%, #05070d 70%);
+        color: #e6f7ff;
+        font-family: 'JetBrains Mono', ui-monospace, monospace;
+      }
+      .static-splash img {
+        width: 96px;
+        height: 96px;
+      }
+      .static-splash strong {
+        font-size: 38px;
+        font-weight: 800;
+        letter-spacing: 0.34em;
+        margin-right: -0.34em;
+        color: #2de2e6;
+        text-shadow: 0 0 18px rgba(45, 226, 230, 0.55);
+      }
+      .static-splash span {
+        color: #8ea3b8;
+        font-size: 14px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <div class="static-splash" aria-busy="true">
+        <img src="%BASE_URL%favicon.svg" alt="" />
+        <strong>NEO URBE</strong>
+        <span>Jacking in…</span>
+      </div>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

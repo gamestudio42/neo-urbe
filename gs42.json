@@ -1,0 +1,14 @@
+{
+  "title": "Neo Urbe",
+  "tagline": {
+    "en": "Raise a neon skyline. Keep the grid alive.",
+    "pt": "Erga um horizonte de neon. Mantenha a rede viva.",
+    "es": "Levanta un horizonte de neón. Mantén viva la red.",
+    "fr": "Dresse un horizon néon. Garde le réseau en vie.",
+    "de": "Errichte eine Neon-Skyline. Halt das Netz am Leben."
+  },
+  "cover": "docs/screenshots/menu.jpg",
+  "genre": "city-builder",
+  "tech": ["TypeScript", "PixiJS", "Web Worker"],
+  "order": 1
+}
