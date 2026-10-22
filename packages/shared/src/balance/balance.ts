@@ -163,10 +163,10 @@ export const PLACEABLE_SPECS: Record<PlaceableKind, PlaceableSpec> = {
   // Costs mirror NEON_DATA. Supply is read from there so this spec stays a classic record.
   datacenter: placeable({
     size: 2,
-    cost: 2000,
-    upkeep: 50,
-    powerUse: 40,
-    jobs: 20,
+    cost: 1000,
+    upkeep: 1,
+    powerUse: 20,
+    jobs: 10,
   }),
   edgeNode: placeable({
     size: 1,

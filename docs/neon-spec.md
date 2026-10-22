@@ -144,19 +144,37 @@ building appears.
 
 | Quantity | Formula |
 | --- | --- |
-| Datacenter supply | 800 if powered, online and watered; 150 if powered and online but dry; 0 otherwise |
+| Datacenter supply | 400 if powered, online and reached by water; 120 if powered and online but dry; 0 if offline or unpowered. A hacked hall still draws its power |
 | Edge node supply | 80 if powered and online; 0 otherwise. No jobs, so it is not an intrusion target |
 | Demand at level ≤ 5 | `NEON_DATA.demand[kind][level]`. Level 5 is residential 14, commercial 48, industrial 24 |
 | Demand above level 5 | `demand[kind][5] * dataPerLevel^(level - 5)`, `dataPerLevel = 1.4` |
 | Level cap without a link | 2, the same ceiling as a lot without water |
 | Fiber cost / upkeep | 5 per tile, 0.05 per tile per month, booked on the power line of the budget |
+| Hall cost / upkeep / power / jobs | 1000, 1 per month, 20 power, 10 jobs. The reference town places two |
 
 A level-7 shop asks for `round(48 * 1.4^2) = 94`, which is more than one edge node, so the first
-block can start on the cheap node and a spire still needs a datacenter. A cooled hall at 500
-could not cover the reference town (demand passed 580) and a second hall, at 40 power each,
-browned out the coal plant once the spires arrived. One hall calibrated to 800 covers that town
-and still draws 40 power and 20 jobs; an intrusion that takes it offline drops its supply to zero.
-The edge node draws 4 power and no water.
+block can start on the cheap node and a spire still needs a datacenter. Cooling is reach, not
+consumption: a placeable asks for no water, and `watered` means the water graph reached the hall.
+The dry 120 is what a powered hall produces when that graph does not. The reference halls sit on
+the pump column and against the coal plant, so they are watered from month 0.
+
+The search starts at the first hall with supply above zero, in placement order, and later halls on
+the same component add their supply. Service is nearest-first from that origin. The reference town
+places the south hall first, then the north hall at `(46, 14)` beside the pumps, with fiber still
+on the water pipes plus a short spur to the north hall. Together they offer 800. One hall, at 400,
+is short of a town whose demand sits near 580. An intrusion's only targets in this preset are the
+halls (other services have no jobs). It takes the chosen hall offline for 60 ticks, half a month,
+and that hall's supply drops to zero while it keeps drawing 20 power. The walk then starts at the
+hall that is still online, so the far side goes dark and the near side stays up. Two full-size
+halls at 40 power each browned the coal plant out; this pair draws 40 in total.
+
+Fiber stays on the pipes on purpose. Buildings conduct both water and data, so once the town fills,
+a cable laid on the pipes reaches the same lots the pipes do. A cable on a dry street would mark
+lots linked and still leave them capped at level 2, because growth needs water and a link. A pipe
+with no fiber leaves a shop watered and unlinked; fiber with no water path leaves a hall linked at
+the dry supply. One empty tile between a cable and a shop isolates it. The edge node draws 4 power
+and no water, and it is not part of the reference town: it is not an intrusion target and would
+leave 80 bandwidth on the side a hack should darken.
 
 Fiber is a path tool with the same placement rules as a pipe (it may share a tile with a road, a
 power line and a pipe, and it does not refuse a slope or open water). Underground demolish removes

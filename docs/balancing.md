@@ -26,7 +26,7 @@ Presets (`packages/simulation/src/scenarios/presets.ts`) drive the city with a s
 | ------------ | --------------------------------------------------------------------- |
 | `balanced`   | Flat map, the scenario town with four services; adds plants and pumps |
 | `disasters`  | Same town with fires and disasters on; clears rubble and rebuilds     |
-| `neon-balanced` | The balanced town under the neon ruleset, plus a fiber spine and a datacenter |
+| `neon-balanced` | The balanced town under the neon ruleset, plus a fiber spine and two datacenters |
 | `no-power`   | Same town without any power plant                                     |
 | `high-taxes` | Same town with every tax at 15%                                       |
 | `grid`       | Flat 128×128 map filled with a street grid of dense zones (benchmark) |
@@ -45,22 +45,26 @@ Final month:
 
 ### Neo Urbe (`neon-balanced`, 64×64, 120 months, seeds 1–3)
 
-The preset is the balanced town plus fiber along the water pipes and one datacenter beside the
-coal plant. Supply is 800. A hall at 500 left demand (it peaks near 630) short, and a second hall
-browned the plant out once buildings grew, so the reference city keeps a single hall.
+The preset is the balanced town plus fiber along the water pipes and two datacenters: one against
+the coal plant, one beside the pump column. Each hall supplies 400 when the water network reaches
+it and draws 20 power, so the pair matches the old single hall's 800 bandwidth and 40 power. Upkeep
+is 1 per hall. Eight per hall left seed 2 at −1,608 after 120 months, and four left it at −680.
+One per hall is what closes every seed.
 
-| Seed | Population | Funds  | Unemployment | Occupancy | Power | Water | Data  | Congestion | Bankrupt |
-| ---- | ---------- | ------ | ------------ | --------- | ----- | ----- | ----- | ---------- | -------- |
-| 1    | 2 488      | −3 869 | 14.5%        | 81.8%     | 95.7% | 90.4% | 90.4% | 0.477      | yes      |
-| 2    | 2 421      | −5 606 | 11.8%        | 81.2%     | 97.0% | 86.1% | 86.1% | 0.427      | yes      |
-| 3    | 2 297      | −5 763 | 18.6%        | 72.0%     | 93.2% | 92.3% | 92.3% | 0.359      | yes      |
+| Seed | Population | Funds | Unemployment | Occupancy | Power | Water | Data  | Congestion | Bankrupt |
+| ---- | ---------- | ----- | ------------ | --------- | ----- | ----- | ----- | ---------- | -------- |
+| 1    | 2 432      | 119   | 12.7%        | 82.2%     | 98.4% | 88.1% | 88.1% | 0.429      | no       |
+| 2    | 2 489      | 16    | 14.6%        | 81.1%     | 94.3% | 81.5% | 81.5% | 0.431      | no       |
+| 3    | 2 354      | 104   | 10.2%        | 72.4%     | 93.7% | 92.8% | 92.8% | 0.369      | no       |
 
-Every seed is still in debt at month 120. The hall costs 2 000 up front and 50 a month, on top of
-the town's usual early deficit. The cable follows the pipes, so the lots the pipes miss are also
-dark: about 10% of data demand is out of reach and those lots stop at level 2. Bandwidth itself is
-not the limit. The monthly balance turns positive in the second half of the run (seed 1 is about
-+80 by month 120) and funds are climbing out of a trough near −8 000 to −9 000. The month stays
-near 2 ms.
+Every seed is out of debt at month 120. The trough is still deep (−6,898, −7,625 and −7,604), and
+seed 2 only crosses zero in the last month. Data served matches water served because the cable
+follows the pipes; demand at the end is 577, 592 and 580 against a combined supply of 800. During
+the run a hack drops one hall for half a month and the far side goes dark, which is why the lowest
+monthly data share (seed 1) falls to about 0.43. Coal supply stays 800. End-of-run power demand is
+808, 827 and 826, a little over the plant, and the served share stays above 0.93 because only the
+last consumers are cut. The halls are 40 of that demand; the zones are what cross the 0.9 stress
+line, so the halls were not shrunk to hide it. The month stays near 1.5 ms.
 
 - **Balanced:** every seed grows for twenty years and ends with RCI demand near zero (the
   town is full). Seeds 1, 2 and 4 are in debt for 4 to 8 months between months 18 and 25 and

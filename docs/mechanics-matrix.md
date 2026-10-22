@@ -104,6 +104,6 @@ Everything below only runs with `ruleset: 'neon'`. Formulas live in
 | Zoning        | Dense lots reach level 7, light lots level 3                   | Observed   | SC2000 has light/dense; the neon caps are ours.                    |
 | Zoning        | Capacity, power and water extrapolate past the classic table   | New        | Exact at or below level 5, so the classic table stays the source.  |
 | Data          | Fiber conducts bandwidth from a datacenter or an edge node     | New        | Third pass of the utility solver, after power and water. One road tile does not cut it. |
-| Data          | Datacenter output needs power and cooling water                | New        | 800 cooled, 150 dry, 0 offline. An edge node supplies 80 on power alone. |
+| Data          | Datacenter output needs power and a reached water network  | New        | 400 cooled, 120 dry, 0 offline. A pair covers the reference town. An edge node supplies 80 on power alone. A hacked hall still draws power. |
 | Data          | A lot without a link stops at level 2                          | New        | Same ceiling as a lot without water. Both are required to go higher. |
 | Data          | `linked` is optional in the save                               | New        | `SAVE_VERSION` stays 2. A neon file without the layer loads as zeros and rebuilds. |
