@@ -94,20 +94,25 @@ export const NEON_DRONES = {
  * A lot without a link stops at `maxLevelWithoutData`, the same cap as a lot without water.
  */
 export const NEON_DATA = {
-  datacenterCost: 2000,
-  datacenterUpkeep: 50,
-  /** Power the hall draws while online. */
-  datacenterPowerUse: 40,
+  datacenterCost: 1000,
   /**
-   * Bandwidth while the hall is powered, online and watered (cooling).
-   * 500 left the reference town short (demand passed 580) and a second hall
-   * tripped the coal plant, so one hall is calibrated to 800.
+   * Monthly upkeep of one hall, booked on the power line.
+   * Eight and then four per hall left seed 2 of `neon-balanced` in debt at month 120.
+   * One per hall is the highest step on that ladder that closes all three seeds.
    */
-  datacenterSupply: 800,
-  /** Bandwidth while powered and online but dry. */
-  datacenterSupplyDry: 150,
-  /** Jobs, so an intrusion can take the hall offline and drop its supply. */
-  datacenterJobs: 20,
+  datacenterUpkeep: 1,
+  /** Power one hall draws, online or hacked. A pair draws the same 40 as the old single hall. */
+  datacenterPowerUse: 20,
+  /**
+   * Bandwidth while the hall is powered, online and watered (the water network reached it;
+   * the hall itself does not consume water). One hall is short of the reference town.
+   * Two halls cover it, and a hack leaves only the far side dark.
+   */
+  datacenterSupply: 400,
+  /** Bandwidth while powered and online but not reached by water. Thirty percent of the cooled output. */
+  datacenterSupplyDry: 120,
+  /** Jobs, so an intrusion can take the hall offline. Targeting is uniform, not weighted by this count. */
+  datacenterJobs: 10,
   edgeNodeCost: 250,
   edgeNodeUpkeep: 8,
   edgeNodePowerUse: 4,

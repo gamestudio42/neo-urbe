@@ -45,7 +45,7 @@ export const SIM_PRESETS: Record<string, SimPreset> = {
     },
   },
   'neon-balanced': {
-    description: 'Neon town: the balanced city plus a fiber spine and a datacenter',
+    description: 'Neon town: the balanced city plus a fiber spine and two datacenters',
     defaultSize: 64,
     create(seed, size) {
       const engine = createEngine({
@@ -101,13 +101,18 @@ export const SIM_PRESETS: Record<string, SimPreset> = {
 };
 
 /**
- * Fiber along the town's water spine, plus a datacenter against the coal plant.
- * The hall touches the plant, so it inherits power and cooling water. Only the neon preset
- * calls this; `buildTown` stays shared with the classic scenarios.
+ * Fiber along the town's water spine, plus two datacenters.
+ * The south hall touches the coal plant. The north hall touches the pump column.
+ * A short spur makes that cable visible; the pumps already conduct data.
+ * The south hall is placed first, so a search with both online starts there.
+ * Only the neon preset calls this; `buildTown` stays shared with the classic scenarios.
  */
 function addNeonData(engine: SimulationEngine): void {
   run(engine, { type: 'fiber', x0: 7, y0: 17, x1: 43, y1: 17 });
   run(engine, { type: 'fiber', x0: 7, y0: 22, x1: 47, y1: 22 });
   run(engine, { type: 'fiber', x0: 43, y0: 18, x1: 43, y1: 21 });
+  run(engine, { type: 'fiber', x0: 44, y0: 17, x1: 46, y1: 17 });
+  run(engine, { type: 'fiber', x0: 46, y0: 17, x1: 46, y1: 15 });
   run(engine, { type: 'place', kind: 'datacenter', x: 47, y: 22 });
+  run(engine, { type: 'place', kind: 'datacenter', x: 46, y: 14 });
 }
