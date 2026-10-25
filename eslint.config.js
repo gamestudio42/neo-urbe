@@ -12,6 +12,7 @@ export default defineConfig(
   {
     ignores: [
       '**/dist/**',
+      'apps/desktop/www/**',
       '**/dist-site/**',
       'site/**',
       '**/node_modules/**',
@@ -72,6 +73,7 @@ export default defineConfig(
       '*.config.{js,ts}',
       'apps/web/vite.config.ts',
       'apps/neon/vite.config.ts',
+      'apps/desktop/src/**/*.ts',
     ],
     languageOptions: { globals: globals.node },
   },

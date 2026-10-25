@@ -1,7 +1,9 @@
 # Architecture
 
 This repository is **Neo Urbe**, a cyberpunk isometric city builder. There is no backend:
-the game runs in the browser, and saves live in IndexedDB or in exported files.
+the game runs in the browser, and saves live in IndexedDB or in exported files. A local
+Electron window, Flatpak and snap package the same build for Linux. They do not replace
+the site.
 
 `apps/neon` is the game the player opens. It boots the shared city UI in `apps/web` with
 the neon theme, the neon ruleset and its own soundtrack. The classic ruleset stays in the
@@ -23,7 +25,8 @@ simulation so neon mechanics remain a gated layer; new cities from the menu are 
 | `packages/view-city`  | Pixi renderer, sprites and animation layer, theme injected             | pixi.js + city packages            |
 | `apps/web`            | City UI: Vite + React panels, worker host, shared by the neon shell    | city packages + shell              |
 | `apps/neon`           | Neo Urbe: neon theme, neon ruleset, synthwave, port 5178               | view-city + themes + city packages |
-| `tools/`              | Headless city reports and the tick benchmark                           | shared, simulation                 |
+| `apps/desktop`        | Electron window. Serves `apps/desktop/www` on the `neo-urbe://` scheme | Electron                           |
+| `tools/`              | Headless city reports, the tick benchmark and the desktop smoke        | shared, simulation                 |
 | `tests/`              | Unit, integration, scenario (Vitest) and end-to-end (Playwright) tests | everything                         |
 
 Packages expose their TypeScript sources directly (`"exports": "./src/index.ts"`). Vite, Vitest
@@ -32,7 +35,21 @@ and `tsx` compile them on the fly, so there is no package build step.
 ## Publish
 
 `pnpm dev` serves Neo Urbe on port 5178 with `base: '/'`. `pnpm build` writes `apps/neon/dist`.
-GitHub Pages publishes that folder (`BASE_PATH` from the repository name).
+GitHub Pages publishes that folder (`BASE_PATH` from the repository name). Neither command
+reads the desktop output.
+
+`pnpm desktop` builds the neon app again with `BASE_PATH=./` into `apps/desktop/www`, then
+opens it in Electron. The window loads `neo-urbe://app/` so the module worker can start.
+That scheme only serves files inside `apps/desktop/www`. The shell refuses other
+navigation. Browser saves and window saves stay apart. Export and import still use
+`.neon.json`.
+
+`packaging/flatpak/` is a local Flatpak recipe (`pnpm desktop:flatpak`). It is not a
+Flathub manifest. `packaging/snap/prepare.sh` stages the host build, and `snapcraft pack`
+from the repository root wraps it. The snap desktop entry points its icon at
+`${SNAP}/meta/gui/icon.png`, because a bare icon name is looked up in the theme and the
+app grid then shows a missing-file placeholder. Both packages are for a developer machine.
+Uploading them to a store is a separate step.
 
 New cities use the `neon-city-save` envelope (`.neon.json`). The decoder still accepts the
 classic `city-builder-save` envelope; the `ruleset` stored in the file decides which rules run.

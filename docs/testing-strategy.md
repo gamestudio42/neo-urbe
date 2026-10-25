@@ -2,14 +2,15 @@
 
 ## Layers
 
-| Layer       | Location                | Runner     | Command                | Purpose                                                                |
-| ----------- | ----------------------- | ---------- | ---------------------- | ---------------------------------------------------------------------- |
-| Unit        | `tests/unit`            | Vitest     | `pnpm test`            | Pure functions: RNG, noise, geometry, validation, networks, save codec |
-| Integration | `tests/integration`     | Vitest     | `pnpm test`            | Engine with several systems: commands + ticks + serialization          |
-| Scenarios   | `tests/scenarios`       | Vitest     | `pnpm test:simulation` | Whole cities simulated for months or years, asserting trends           |
-| End-to-end  | `tests/e2e`             | Playwright | `pnpm test:e2e`        | Real browser: boot, menu, picking, tools, HUD, save/load, music        |
-| Reports     | `tools/headless-sim.ts` | tsx        | `pnpm sim`             | JSON reports for balancing                                             |
-| Benchmarks  | `tools/benchmark.ts`    | tsx        | `pnpm bench`           | Tick timings and memory against budgets                                |
+| Layer       | Location                                                    | Runner             | Command                           | Purpose                                                                           |
+| ----------- | ----------------------------------------------------------- | ------------------ | --------------------------------- | --------------------------------------------------------------------------------- |
+| Unit        | `tests/unit`                                                | Vitest             | `pnpm test`                       | Pure functions: RNG, noise, geometry, validation, networks, save codec            |
+| Integration | `tests/integration`                                         | Vitest             | `pnpm test`                       | Engine with several systems: commands + ticks + serialization                     |
+| Scenarios   | `tests/scenarios`                                           | Vitest             | `pnpm test:simulation`            | Whole cities simulated for months or years, asserting trends                      |
+| End-to-end  | `tests/e2e`                                                 | Playwright         | `pnpm test:e2e`                   | Real browser: boot, menu, picking, tools, HUD, save/load, music                   |
+| Desktop     | `tests/unit/desktop-dist.test.ts`, `tools/desktop-smoke.ts` | Vitest, Playwright | `pnpm test`, `pnpm desktop:smoke` | `neo-urbe://` allowlist; the Electron window founds a city, lays a road and saves |
+| Reports     | `tools/headless-sim.ts`                                     | tsx                | `pnpm sim`                        | JSON reports for balancing                                                        |
+| Benchmarks  | `tools/benchmark.ts`                                        | tsx                | `pnpm bench`                      | Tick timings and memory against budgets                                           |
 
 ## Scenario rules
 

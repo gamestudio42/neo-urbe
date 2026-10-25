@@ -100,14 +100,17 @@ pnpm dev        # http://localhost:5178
 
 Or with Docker: `docker compose up`.
 
-| Command         | Description                                                 |
-| --------------- | ----------------------------------------------------------- |
-| `pnpm check`    | Lint, type check, unit/integration/scenario tests and build |
-| `pnpm test:e2e` | Playwright end-to-end tests                                 |
-| `pnpm sim`      | Headless simulation over presets and seeds                  |
-| `pnpm bench`    | Tick timing benchmark (`--strict` for CI)                   |
+| Command                | Description                                                           |
+| ---------------------- | --------------------------------------------------------------------- |
+| `pnpm check`           | Lint, type check, unit/integration/scenario tests and build           |
+| `pnpm test:e2e`        | Playwright end-to-end tests                                           |
+| `pnpm sim`             | Headless simulation over presets and seeds                            |
+| `pnpm bench`           | Tick timing benchmark (`--strict` for CI)                             |
+| `pnpm desktop`         | Linux window around a separate `BASE_PATH=./` build                   |
+| `pnpm desktop:flatpak` | Local Flatpak, after Flatpak is installed (`packaging/flatpak`)       |
+| `snapcraft pack`       | Local snap, after `packaging/snap/prepare.sh` (`snap/snapcraft.yaml`) |
 
-Every push to `main` publishes `apps/neon/dist` to GitHub Pages. To host it elsewhere:
+Every push to `main` publishes `apps/neon/dist` to GitHub Pages. That build is unchanged by the desktop shell: `pnpm desktop` writes a second copy under `apps/desktop/www` with `BASE_PATH=./`. Browser saves stay in IndexedDB. The window keeps its own profile. Cities still move between them as `.neon.json`. The Flatpak and snap recipes are for a local machine. They are not store submissions. To host the site elsewhere:
 
 ```sh
 BASE_PATH=/path/ pnpm build

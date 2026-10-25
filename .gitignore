@@ -1,5 +1,11 @@
 node_modules/
 dist/
+apps/desktop/www/
+packaging/flatpak/stage/
+packaging/snap/stage/
+packaging/flatpak/build/
+packaging/flatpak/repo/
+.flatpak-builder/
 dist-site/
 site/
 coverage/
@@ -9,5 +15,6 @@ test-results/
 blob-report/
 references/
 *.log
+*.snap
 .DS_Store
 .vite/
