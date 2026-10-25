@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Neo Urbe
+Comment=Raise a neon skyline. Keep the grid alive.
+Exec=neo-urbe
+Icon=io.github.gamestudio42.neo-urbe
+Type=Application
+Categories=Game;Simulation;
+StartupWMClass=neo-urbe
+Terminal=false

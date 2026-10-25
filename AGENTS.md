@@ -43,6 +43,11 @@ pnpm test             # unit + integration tests (Vitest)
 pnpm test:simulation  # long scenario tests (Vitest)
 pnpm test:e2e         # Playwright (builds and serves Neo Urbe)
 pnpm build            # production build of apps/neon
+pnpm desktop          # Electron window; separate BASE_PATH=./ build, Pages unchanged
+pnpm desktop:smoke    # found a city in that window
+pnpm desktop:flatpak  # local Flatpak; not a Flathub submission
+# snap, from the repo root, after the host staging script:
+#   packaging/snap/prepare.sh && snapcraft pack
 pnpm sim --preset balanced --months 120 --seeds 1,2,3   # headless JSON reports
 pnpm sim --list       # simulation presets
 pnpm bench            # tick timing benchmark (128×128 grid city); --strict fails on budgets
@@ -88,6 +93,10 @@ packages/view-city/  Renderer, sprites and animation layer (theme injected)
   cyberZoneSprites.ts Cyberpunk houses, shops and factories
   utilitySprites.ts   Power plants, wind turbines, pumps and wells
 apps/neon/         Neo Urbe web app (port 5178): theme, ruleset, copy and music
+apps/desktop/      Electron shell. Serves apps/desktop/www on neo-urbe://
+packaging/flatpak/ Local Flatpak recipe. Not a Flathub submission
+packaging/snap/    Host script that stages Electron for snapcraft
+snap/              snapcraft.yaml, desktop entry and icon
 apps/web/src/      City UI the neon app boots
   ui/         React screens and panels: boot screen, logo, menu, HUD, pause overlay,
               toolbar, minimap, budget, charts, overlays, inspector, tutorial, toasts

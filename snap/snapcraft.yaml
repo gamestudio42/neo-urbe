@@ -1,0 +1,51 @@
+# From the repository root:
+#   packaging/snap/prepare.sh
+#   snapcraft pack
+#   sudo snap install --dangerous ./neo-urbe_0.1.0_amd64.snap
+#
+# prepare.sh builds the desktop shell on the host. The LXD build only copies
+# packaging/snap/stage. Running pnpm inside the container is what made pack
+# sit for more than an hour.
+name: neo-urbe
+base: core24
+version: '0.1.0'
+summary: Raise a neon skyline. Keep the grid alive.
+description: |
+  A cyberpunk isometric city builder. Zone the land, hold an unstable power
+  grid, and keep the megacorps out. This package runs the game offline.
+grade: devel
+confinement: strict
+license: MIT
+website: https://gamestudio42.github.io/neo-urbe/
+source-code: https://github.com/gamestudio42/neo-urbe
+contact: https://github.com/gamestudio42/neo-urbe/issues
+
+apps:
+  neo-urbe:
+    command: bin/neo-urbe
+    extensions: [gnome]
+    environment:
+      TMPDIR: $XDG_RUNTIME_DIR
+    plugs:
+      - audio-playback
+      - browser-support
+
+parts:
+  neo-urbe:
+    plugin: nil
+    source: packaging/snap/stage
+    source-type: local
+    stage-packages:
+      - libnss3
+      - libnspr4
+      - libgbm1
+      - libasound2t64
+    override-build: |
+      set -eu
+      if [ ! -x electron/electron ] || [ ! -f share/neo-urbe/www/index.html ]; then
+        echo "Run packaging/snap/prepare.sh on the host before snapcraft pack." >&2
+        exit 1
+      fi
+      root="${CRAFT_PART_INSTALL:-$SNAPCRAFT_PART_INSTALL}"
+      mkdir -p "$root"
+      cp -a electron share bin meta "$root/"

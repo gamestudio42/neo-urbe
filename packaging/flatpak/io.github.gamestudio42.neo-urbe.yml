@@ -1,0 +1,52 @@
+# Local Flatpak for a developer machine. Not a Flathub submission.
+#
+# packaging/flatpak/build.sh fills stage/ from the host Electron build, then
+# flatpak-builder installs io.github.gamestudio42.neo-urbe for the current user.
+# The installed app has no network permission. A Flathub manifest has to vendor
+# sources and is written by the maintainer, separately from this file.
+id: io.github.gamestudio42.neo-urbe
+runtime: org.freedesktop.Platform
+runtime-version: '25.08'
+sdk: org.freedesktop.Sdk
+base: org.electronjs.Electron2.BaseApp
+base-version: '25.08'
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.node22
+command: neo-urbe
+separate-locales: false
+finish-args:
+  - --share=ipc
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --socket=pulseaudio
+  - --device=dri
+modules:
+  - name: neo-urbe
+    buildsystem: simple
+    sources:
+      - type: dir
+        path: stage
+      - type: file
+        path: ../../LICENSE
+      - type: file
+        path: ../../apps/neon/public/favicon.svg
+        dest-filename: io.github.gamestudio42.neo-urbe.svg
+      - type: file
+        path: io.github.gamestudio42.neo-urbe.desktop
+      - type: file
+        path: io.github.gamestudio42.neo-urbe.metainfo.xml
+      - type: script
+        dest-filename: run.sh
+        commands:
+          - 'exec zypak-wrapper /app/electron/electron /app/share/neo-urbe/dist/main.js "$@"'
+    build-commands:
+      - install -Dm755 run.sh /app/bin/neo-urbe
+      - mkdir -p /app/electron /app/share/neo-urbe
+      - cp -a electron/. /app/electron/
+      - rm -f /app/electron/chrome-sandbox
+      - cp -a game/. /app/share/neo-urbe/
+      - install -Dm644 io.github.gamestudio42.neo-urbe.desktop /app/share/applications/io.github.gamestudio42.neo-urbe.desktop
+      - install -Dm644 io.github.gamestudio42.neo-urbe.metainfo.xml /app/share/metainfo/io.github.gamestudio42.neo-urbe.metainfo.xml
+      - install -Dm644 io.github.gamestudio42.neo-urbe.svg /app/share/icons/hicolor/scalable/apps/io.github.gamestudio42.neo-urbe.svg
+      - install -Dm644 game/assets/icon.png /app/share/icons/hicolor/256x256/apps/io.github.gamestudio42.neo-urbe.png
+      - install -Dm644 LICENSE /app/share/licenses/io.github.gamestudio42.neo-urbe/LICENSE
