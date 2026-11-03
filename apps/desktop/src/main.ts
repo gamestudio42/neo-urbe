@@ -11,6 +11,7 @@ import { DIST_HOST, DIST_SCHEME, allowShellRequest, resolveDistFile } from './di
  */
 
 const here = path.dirname(fileURLToPath(import.meta.url));
+const smoke = process.argv.includes('--smoke');
 const distDir = process.env.NEO_URBE_DIST
   ? path.resolve(process.env.NEO_URBE_DIST)
   : path.resolve(here, '../www');
@@ -83,6 +84,7 @@ if (!gotLock) {
       minHeight: 640,
       title: 'Neo Urbe',
       backgroundColor: '#05070d',
+      show: !smoke,
       icon: existsSync(iconPath) ? iconPath : undefined,
       autoHideMenuBar: true,
       webPreferences: {
@@ -93,6 +95,7 @@ if (!gotLock) {
       },
     });
     win.removeMenu();
+    if (smoke) void runSmoke(win);
     win.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
     win.webContents.on('will-navigate', (event, url) => {
       const next = new URL(url);
@@ -106,4 +109,22 @@ if (!gotLock) {
   app.on('window-all-closed', () => {
     app.quit();
   });
+}
+
+/** `--smoke`: open the menu hidden, check that it booted, print the result and exit. */
+async function runSmoke(win: BrowserWindow): Promise<void> {
+  const deadline = Date.now() + 60_000;
+  let result: unknown = null;
+  while (Date.now() < deadline) {
+    result = await win.webContents
+      .executeJavaScript(
+        `({ ready: !!document.querySelector('[data-testid="main-menu"]'), href: location.href })`,
+      )
+      .catch(() => null);
+    if ((result as { ready?: boolean } | null)?.ready) break;
+    await new Promise((resolve) => setTimeout(resolve, 250));
+  }
+  const ok = (result as { ready?: boolean } | null)?.ready === true;
+  console.log(`SMOKE ${JSON.stringify(result)}`);
+  app.exit(ok ? 0 : 1);
 }

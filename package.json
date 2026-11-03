@@ -16,7 +16,6 @@
     "desktop:build": "BASE_PATH=./ pnpm --filter @neon/web exec vite build --outDir ../desktop/www --emptyOutDir && pnpm --filter @neon/desktop build",
     "desktop": "pnpm desktop:build && pnpm --filter @neon/desktop start",
     "desktop:smoke": "pnpm desktop:build && tsx tools/desktop-smoke.ts",
-    "desktop:flatpak": "pnpm desktop:build && packaging/flatpak/build.sh",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

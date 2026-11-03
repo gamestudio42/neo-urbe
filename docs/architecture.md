@@ -44,12 +44,14 @@ That scheme only serves files inside `apps/desktop/www`. The shell refuses other
 navigation. Browser saves and window saves stay apart. Export and import still use
 `.neon.json`.
 
-`packaging/flatpak/` is a local Flatpak recipe (`pnpm desktop:flatpak`). It is not a
-Flathub manifest. `packaging/snap/prepare.sh` stages the host build, and `snapcraft pack`
-from the repository root wraps it. The snap desktop entry points its icon at
-`${SNAP}/meta/gui/icon.png`, because a bare icon name is looked up in the theme and the
-app grid then shows a missing-file placeholder. Both packages are for a developer machine.
-Uploading them to a store is a separate step.
+The snap is built from source. `snap/snapcraft.yaml` installs the workspace, runs
+`pnpm --filter @neon/desktop dist:dir` and packs `apps/desktop/release/linux-unpacked`.
+`.github/workflows/snap.yml` builds that file and smoke-tests it. The desktop entry
+points its icon at `${SNAP}/meta/gui/icon.png`, because a bare icon name is looked up
+in the theme and the app grid then shows a missing-file placeholder. Snapcraft copies
+only `snap/gui` into the package. The store banner is listing media, not a snap file:
+upload `snap/store/banner.jpg` under the name `banner.jpg` (3840×1280, 3:1, under 2 MB).
+`snap/store/banner.png` is the same image and is over that limit.
 
 New cities use the `neon-city-save` envelope (`.neon.json`). The decoder still accepts the
 classic `city-builder-save` envelope; the `ruleset` stored in the file decides which rules run.

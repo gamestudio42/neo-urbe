@@ -4,15 +4,44 @@
   "private": true,
   "type": "module",
   "description": "Linux window for the Neo Urbe web build. City rules do not live here.",
+  "author": "Game Studio 42",
   "license": "MIT",
   "main": "dist/main.js",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "start": "electron .",
-    "typecheck": "tsc -p tsconfig.json"
+    "typecheck": "tsc -p tsconfig.json",
+    "dist:dir": "pnpm -w desktop:build && electron-builder --linux dir --publish never"
   },
   "devDependencies": {
     "@types/node": "^22.20.5",
-    "electron": "^45.0.0"
+    "electron": "^45.0.0",
+    "electron-builder": "^26.18.0"
+  },
+  "build": {
+    "appId": "io.github.gamestudio42.neo-urbe",
+    "productName": "Neo Urbe",
+    "directories": {
+      "output": "release",
+      "buildResources": "assets"
+    },
+    "files": [
+      "dist/**",
+      "www/**",
+      "assets/**",
+      "package.json"
+    ],
+    "asar": true,
+    "linux": {
+      "target": [
+        "dir"
+      ],
+      "category": "Game",
+      "icon": "assets/icon.png",
+      "synopsis": "Raise a neon skyline. Keep the grid alive.",
+      "description": "A cyberpunk isometric city builder. Zone the land, hold an unstable power grid, and keep the megacorps out.",
+      "executableName": "neo-urbe"
+    },
+    "executableName": "neo-urbe"
   }
 }

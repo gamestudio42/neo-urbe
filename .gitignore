@@ -1,11 +1,7 @@
 node_modules/
 dist/
 apps/desktop/www/
-packaging/flatpak/stage/
-packaging/snap/stage/
-packaging/flatpak/build/
-packaging/flatpak/repo/
-.flatpak-builder/
+apps/desktop/release/
 dist-site/
 site/
 coverage/

@@ -1,51 +1,66 @@
-# From the repository root:
-#   packaging/snap/prepare.sh
-#   snapcraft pack
-#   sudo snap install --dangerous ./neo-urbe_0.1.0_amd64.snap
+# Neo Urbe as a snap, built from source: installs the workspace, runs
+# `pnpm --filter @neon/desktop dist:dir` and packs release/linux-unpacked. The Snap Store's
+# Builds tab builds and releases it to edge on every push to main; .github/workflows/snap.yml
+# builds the same file and smoke-tests it.
 #
-# prepare.sh builds the desktop shell on the host. The LXD build only copies
-# packaging/snap/stage. Running pnpm inside the container is what made pack
-# sit for more than an hour.
+# The store banner is not part of the snap. snap/gui is only the desktop entry and the icon,
+# which snapcraft copies to meta/gui. Upload snap/store/banner.jpg in the listing media and
+# keep the name banner.jpg: 3840×1280, 3:1, under the 2 MB limit. snap/store/banner.png is
+# the same image and is over that limit, so it is not the file to upload.
 name: neo-urbe
-base: core24
-version: '0.1.0'
+title: Neo Urbe
+base: core22
+adopt-info: neo-urbe
+icon: snap/gui/icon.png
 summary: Raise a neon skyline. Keep the grid alive.
 description: |
   A cyberpunk isometric city builder. Zone the land, hold an unstable power
-  grid, and keep the megacorps out. This package runs the game offline.
-grade: devel
-confinement: strict
+  grid, and keep the megacorps out. Hackers probe the network, drones follow
+  the avenues, and the skyline climbs. The interface is in Portuguese,
+  English, Spanish, French and German.
 license: MIT
 website: https://gamestudio42.github.io/neo-urbe/
 source-code: https://github.com/gamestudio42/neo-urbe
-contact: https://github.com/gamestudio42/neo-urbe/issues
+issues: https://github.com/gamestudio42/neo-urbe/issues
+contact: talkgamestudio42@gmail.com
+grade: stable
+confinement: strict
+compression: lzo
+
+architectures:
+  - build-on: amd64
 
 apps:
   neo-urbe:
-    command: bin/neo-urbe
+    # Chromium's own sandbox cannot run inside strict confinement; the snap sandbox replaces it.
+    command: app/neo-urbe --no-sandbox
+    desktop: meta/gui/neo-urbe.desktop
     extensions: [gnome]
+    plugs:
+      - browser-support
+      - opengl
+      - audio-playback
     environment:
       TMPDIR: $XDG_RUNTIME_DIR
-    plugs:
-      - audio-playback
-      - browser-support
 
 parts:
   neo-urbe:
     plugin: nil
-    source: packaging/snap/stage
-    source-type: local
+    source: .
+    build-snaps:
+      - node/22/stable
     stage-packages:
-      - libnss3
       - libnspr4
-      - libgbm1
-      - libasound2t64
+      - libnss3
+      - libxss1
+    override-pull: |
+      craftctl default
+      craftctl set version="$(sed -n 's/^  "version": "\(.*\)",$/\1/p' apps/desktop/package.json)"
     override-build: |
-      set -eu
-      if [ ! -x electron/electron ] || [ ! -f share/neo-urbe/www/index.html ]; then
-        echo "Run packaging/snap/prepare.sh on the host before snapcraft pack." >&2
-        exit 1
-      fi
-      root="${CRAFT_PART_INSTALL:-$SNAPCRAFT_PART_INSTALL}"
-      mkdir -p "$root"
-      cp -a electron share bin meta "$root/"
+      # The node snap is read-only: install the pinned pnpm next to the build.
+      npm install --prefix "$CRAFT_PART_BUILD/.tools" "$(sed -n 's/^  "packageManager": "\(.*\)",$/\1/p' package.json)"
+      export PATH="$CRAFT_PART_BUILD/.tools/node_modules/.bin:$PATH"
+      pnpm install --frozen-lockfile
+      pnpm --filter @neon/desktop dist:dir
+      mkdir -p "$CRAFT_PART_INSTALL/app"
+      cp -a apps/desktop/release/linux-unpacked/. "$CRAFT_PART_INSTALL/app/"
