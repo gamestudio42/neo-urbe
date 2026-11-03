@@ -152,8 +152,8 @@ pnpm install
 pnpm dev
 ```
 
-Enable Pages on your fork (the workflow in `.github/workflows/deploy.yml` already
-publishes `apps/neon/dist`). Or host the build anywhere:
+Enable Pages on your fork from the `gh-pages` branch (`.github/workflows/pages.yml`
+already publishes `apps/neon/dist`). Or host the build anywhere:
 
 ```sh
 BASE_PATH=/your-path/ pnpm build

@@ -35,8 +35,9 @@ and `tsx` compile them on the fly, so there is no package build step.
 ## Publish
 
 `pnpm dev` serves Neo Urbe on port 5178 with `base: '/'`. `pnpm build` writes `apps/neon/dist`.
-GitHub Pages publishes that folder (`BASE_PATH` from the repository name). Neither command
-reads the desktop output.
+GitHub Pages publishes that folder from the `gh-pages` branch. The workflow builds it with
+`BASE_PATH=./`, so the same files work at the site root and under a pull request preview.
+Neither command reads the desktop output.
 
 `pnpm desktop` builds the neon app again with `BASE_PATH=./` into `apps/desktop/www`, then
 opens it in Electron. The window loads `neo-urbe://app/` so the module worker can start.
