@@ -18,7 +18,7 @@ description: |
   grid, and keep the megacorps out. Hackers probe the network, drones follow
   the avenues, and the skyline climbs. The interface is in Portuguese,
   English, Spanish, French and German.
-license: MIT
+license: AGPL-3.0-or-later
 website: https://gamestudio42.github.io/neo-urbe/
 source-code: https://github.com/gamestudio42/neo-urbe
 issues: https://github.com/gamestudio42/neo-urbe/issues

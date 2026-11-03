@@ -143,7 +143,7 @@ Docs: [architecture](docs/architecture.md) · [neon spec](docs/neon-spec.md) · 
 
 ## Fork & remix
 
-Neo Urbe is MIT-licensed. Fork it, change the rules, ship your own city on GitHub Pages.
+Neo Urbe is free software under the AGPL. Fork it, change the rules, and ship your own city on GitHub Pages. If you run a modified version for other people, including as a website, you must offer them its source under the same licence.
 
 ```sh
 git clone https://github.com/gamestudio42/neo-urbe.git
@@ -163,6 +163,12 @@ Ideas and patches: [good first issues](https://github.com/gamestudio42/neo-urbe/
 
 ## Licence
 
-Original code, procedural sprites and synthesized sound and music, MIT licence.
+Neo Urbe is free software under the GNU Affero General Public License, version 3 or any later
+version ([`AGPL-3.0-or-later`](LICENSE)). Copyright (c) 2026 Marcel Savegnago. If you run a
+modified version for other people, including as a website or over a network, you must offer
+them its source under the same licence. Releases up to commit 3b94de5 were published under MIT
+and remain available under those terms.
+
+Original code, procedural sprites and synthesized sound and music.
 Micropolis (GPLv3) and OpenSC2K were studied as references for behaviour only;
 no code or assets were copied.

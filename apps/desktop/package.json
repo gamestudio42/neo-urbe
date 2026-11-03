@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Linux window for the Neo Urbe web build. City rules do not live here.",
   "author": "Game Studio 42",
-  "license": "MIT",
+  "license": "AGPL-3.0-or-later",
   "main": "dist/main.js",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
