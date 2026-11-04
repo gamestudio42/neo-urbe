@@ -83,13 +83,37 @@ Pollution around industry and the power plant.
 - **Original soundtrack.** Synthwave, synthesized on the fly — one piece in the menu, another in the city.
 - **Your city stays with you.** Autosave in the browser, plus export and import of `.neon.json` files.
 
+<p align="center">
+  <img src="docs/screenshots/drones.jpg" alt="A drone port with drones in the air, beside the avenue" width="920">
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/corps.jpg" alt="A corporation headquarters on the avenue, with the drone port, the hospital and a residential zone" width="920">
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/hackers.jpg" alt="The hospital inspector: no power, and no firewall nearby" width="920">
+</p>
+
 ## Play
 
-|               |                                                                             |
-| ------------- | --------------------------------------------------------------------------- |
-| **Live game** | [gamestudio42.github.io/neo-urbe](https://gamestudio42.github.io/neo-urbe/) |
-| **Hotkeys**   | `R` road · `1–6` zones · `E` power · `T` water · `P` pause · `M` sound      |
-| **Language**  | English, Portuguese, Spanish, French, German · code and docs in English     |
+Open **[gamestudio42.github.io/neo-urbe](https://gamestudio42.github.io/neo-urbe/)**.
+Choose a seed, map size and difficulty, then found the city. The first visit follows your
+browser language; the interface supports English, Portuguese, Spanish, French and German.
+Code and docs stay in English.
+
+| Action                                   | Shortcut        |
+| ---------------------------------------- | --------------- |
+| Inspect / road                           | `Q` / `R`       |
+| Zones / remove zone                      | `1–6` / `0`     |
+| Power / water / fiber                    | `E` / `T` / `Y` |
+| Pause / sound                            | `P` / `M`       |
+| Underground / grid                       | `U` / `G`       |
+| Cancel the current tool or close a panel | `Esc`           |
+
+The Menu lists every shortcut, including the drone port, the firewall and the corporation
+headquarters. Cities autosave in the browser; export and import `.neon.json` to keep a
+portable copy.
 
 ## Develop
 
@@ -100,17 +124,16 @@ pnpm dev        # http://localhost:5178
 
 Or with Docker: `docker compose up`.
 
-| Command                | Description                                                           |
-| ---------------------- | --------------------------------------------------------------------- |
-| `pnpm check`           | Lint, type check, unit/integration/scenario tests and build           |
-| `pnpm test:e2e`        | Playwright end-to-end tests                                           |
-| `pnpm sim`             | Headless simulation over presets and seeds                            |
-| `pnpm bench`           | Tick timing benchmark (`--strict` for CI)                             |
-| `pnpm desktop`         | Linux window around a separate `BASE_PATH=./` build                   |
-| `pnpm desktop:flatpak` | Local Flatpak, after Flatpak is installed (`packaging/flatpak`)       |
-| `snapcraft pack`       | Local snap, after `packaging/snap/prepare.sh` (`snap/snapcraft.yaml`) |
+| Command          | Description                                                              |
+| ---------------- | ------------------------------------------------------------------------ |
+| `pnpm check`     | Lint, type check, unit/integration/scenario tests and build              |
+| `pnpm test:e2e`  | Playwright end-to-end tests                                              |
+| `pnpm sim`       | Headless simulation over presets and seeds                               |
+| `pnpm bench`     | Tick timing benchmark (`--strict` for CI)                                |
+| `pnpm desktop`   | Linux window around a separate `BASE_PATH=./` build                      |
+| `snapcraft pack` | Snap from `snap/snapcraft.yaml`. The Snap Store listing is still pending |
 
-Every push to `main` publishes `apps/neon/dist` to GitHub Pages. That build is unchanged by the desktop shell: `pnpm desktop` writes a second copy under `apps/desktop/www` with `BASE_PATH=./`. Browser saves stay in IndexedDB. The window keeps its own profile. Cities still move between them as `.neon.json`. The Flatpak and snap recipes are for a local machine. They are not store submissions. To host the site elsewhere:
+Every push to `main` publishes `apps/neon/dist` to GitHub Pages. That build is unchanged by the desktop shell: `pnpm desktop` writes a second copy under `apps/desktop/www` with `BASE_PATH=./`. Browser saves stay in IndexedDB. The window keeps its own profile. Cities still move between them as `.neon.json`. `snapcraft pack` builds the snap from source. The store banner is `snap/store/banner.jpg`: upload that file, still named `banner.jpg`, in the Snap Store listing. It is not inside the snap. To host the site elsewhere:
 
 ```sh
 BASE_PATH=/path/ pnpm build
@@ -120,7 +143,7 @@ Docs: [architecture](docs/architecture.md) · [neon spec](docs/neon-spec.md) · 
 
 ## Fork & remix
 
-Neo Urbe is MIT-licensed. Fork it, change the rules, ship your own city on GitHub Pages.
+Neo Urbe is free software under the AGPL. Fork it, change the rules, and ship your own city on GitHub Pages. If you run a modified version for other people, including as a website, you must offer them its source under the same licence.
 
 ```sh
 git clone https://github.com/gamestudio42/neo-urbe.git
@@ -129,8 +152,8 @@ pnpm install
 pnpm dev
 ```
 
-Enable Pages on your fork (the workflow in `.github/workflows/deploy.yml` already
-publishes `apps/neon/dist`). Or host the build anywhere:
+Enable Pages on your fork from the `gh-pages` branch (`.github/workflows/pages.yml`
+already publishes `apps/neon/dist`). Or host the build anywhere:
 
 ```sh
 BASE_PATH=/your-path/ pnpm build
@@ -140,6 +163,12 @@ Ideas and patches: [good first issues](https://github.com/gamestudio42/neo-urbe/
 
 ## Licence
 
-Original code, procedural sprites and synthesized sound and music, MIT licence.
+Neo Urbe is free software under the GNU Affero General Public License, version 3 or any later
+version ([`AGPL-3.0-or-later`](LICENSE)). Copyright (c) 2026 Marcel Savegnago. If you run a
+modified version for other people, including as a website or over a network, you must offer
+them its source under the same licence. Releases up to commit 3b94de5 were published under MIT
+and remain available under those terms.
+
+Original code, procedural sprites and synthesized sound and music.
 Micropolis (GPLv3) and OpenSC2K were studied as references for behaviour only;
 no code or assets were copied.
