@@ -1,5 +1,5 @@
 import type { RciValues, Speed } from '@city/shared';
-import type { ReactNode } from 'react';
+import { useLayoutEffect, useRef, type ReactNode } from 'react';
 import { formatMoney, formatNumber, months, useStrings } from '../i18n';
 import type { GameSession, PanelId } from '../state/session';
 import { useStore } from '../state/store';
@@ -13,6 +13,25 @@ export function Hud({ session, credit }: { session: GameSession; credit?: ReactN
   const stats = useStore(session.ui, (s) => s.stats);
   const speed = useStore(session.ui, (s) => s.speed);
   const panel = useStore(session.ui, (s) => s.panel);
+  const hudRef = useRef<HTMLElement>(null);
+  const hudReady = stats !== null;
+  useLayoutEffect(() => {
+    const node = hudRef.current;
+    if (!node) return;
+    const apply = () => {
+      document.documentElement.style.setProperty(
+        '--hud-block',
+        `${Math.ceil(node.getBoundingClientRect().height)}px`,
+      );
+    };
+    apply();
+    const observer = new ResizeObserver(apply);
+    observer.observe(node);
+    return () => {
+      observer.disconnect();
+      document.documentElement.style.removeProperty('--hud-block');
+    };
+  }, [hudReady]);
   if (!stats) return null;
   const h = t.hud;
   const monthNames = months(locale);
@@ -30,7 +49,7 @@ export function Hud({ session, credit }: { session: GameSession; credit?: ReactN
   );
 
   return (
-    <header className="hud" data-testid="hud">
+    <header ref={hudRef} className="hud" data-testid="hud">
       <div className="hud-city">
         <strong data-testid="city-name">{stats.name}</strong>
         <span className="muted" data-testid="date">

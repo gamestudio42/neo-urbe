@@ -2,13 +2,16 @@ import { useStrings } from '../i18n';
 import type { GameSession } from '../state/session';
 import { useStore } from '../state/store';
 import { TUTORIAL_CHECKS } from '../state/tutorial';
+import { useCoarsePointer } from './coarsePointer';
 
 export function Tutorial({ session }: { session: GameSession }) {
   const t = useStrings(session.ui);
+  const coarse = useCoarsePointer();
   const step = useStore(session.ui, (s) => s.tutorial);
   if (step === null) return null;
   const content = t.tutorial.steps[step];
   if (!content) return null;
+  const text = coarse ? content.touch : content.text;
   const manual = TUTORIAL_CHECKS[step] === null;
   const last = step === t.tutorial.steps.length - 1;
   return (
@@ -17,7 +20,7 @@ export function Tutorial({ session }: { session: GameSession }) {
         {t.tutorial.title} · {step + 1}/{t.tutorial.steps.length}
       </div>
       <h3>{content.title}</h3>
-      <p>{content.text}</p>
+      <p>{text}</p>
       <div className="tutorial-actions">
         <button
           type="button"

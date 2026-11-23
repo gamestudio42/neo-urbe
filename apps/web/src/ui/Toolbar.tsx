@@ -3,6 +3,7 @@ import { formatMoney, formatNumber, useStrings, type Locale, type Strings } from
 import type { GameSession } from '../state/session';
 import { useStore } from '../state/store';
 import { TOOL_GROUPS, toolsFor, type ToolDef } from '../tools/tools';
+import { useCoarsePointer } from './coarsePointer';
 import { ToolIcon } from './icons';
 
 function costLabel(tool: ToolDef, t: Strings, locale: Locale): string | null {
@@ -47,38 +48,41 @@ export function Toolbar({ session }: { session: GameSession }) {
   const population = useStore(session.ui, (s) => s.stats?.population ?? 0);
   const ruleset = useStore(session.ui, (s) => s.stats?.ruleset ?? 'classic');
   const tools = toolsFor(ruleset);
+  const coarse = useCoarsePointer();
   return (
     <nav className="toolbar" aria-label={t.ui.tools} data-testid="toolbar">
       {TOOL_GROUPS.map((group) => (
         <div key={group} className="tool-group" role="group" aria-label={t.toolGroups[group]}>
-          {tools.filter((tool) => tool.group === group).map((tool) => {
-            const spec =
-              tool.id in PLACEABLE_SPECS ? PLACEABLE_SPECS[tool.id as PlaceableKind] : undefined;
-            const locked = Boolean(spec && spec.minPopulation > population);
-            const cost = costLabel(tool, t, locale);
-            const title = [
-              t.tools[tool.id],
-              cost,
-              locked && spec ? t.hud.unlockAt(formatNumber(spec.minPopulation, locale)) : null,
-              tool.hotkey ? `${t.ui.shortcut}: ${tool.hotkey.toUpperCase()}` : null,
-            ]
-              .filter(Boolean)
-              .join(' — ');
-            return (
-              <button
-                key={tool.id}
-                type="button"
-                className={`tool-button${active === tool.id ? ' active' : ''}${locked ? ' locked' : ''}`}
-                title={title}
-                aria-label={t.tools[tool.id]}
-                aria-pressed={active === tool.id}
-                data-testid={`tool-${tool.id}`}
-                onClick={() => session.setTool(tool.id)}
-              >
-                <ToolIcon id={tool.id} style={session.renderer.theme.style} />
-              </button>
-            );
-          })}
+          {tools
+            .filter((tool) => tool.group === group)
+            .map((tool) => {
+              const spec =
+                tool.id in PLACEABLE_SPECS ? PLACEABLE_SPECS[tool.id as PlaceableKind] : undefined;
+              const locked = Boolean(spec && spec.minPopulation > population);
+              const cost = costLabel(tool, t, locale);
+              const title = [
+                t.tools[tool.id],
+                cost,
+                locked && spec ? t.hud.unlockAt(formatNumber(spec.minPopulation, locale)) : null,
+                !coarse && tool.hotkey ? `${t.ui.shortcut}: ${tool.hotkey.toUpperCase()}` : null,
+              ]
+                .filter(Boolean)
+                .join(' — ');
+              return (
+                <button
+                  key={tool.id}
+                  type="button"
+                  className={`tool-button${active === tool.id ? ' active' : ''}${locked ? ' locked' : ''}`}
+                  title={title}
+                  aria-label={t.tools[tool.id]}
+                  aria-pressed={active === tool.id}
+                  data-testid={`tool-${tool.id}`}
+                  onClick={() => session.setTool(tool.id)}
+                >
+                  <ToolIcon id={tool.id} style={session.renderer.theme.style} />
+                </button>
+              );
+            })}
         </div>
       ))}
     </nav>

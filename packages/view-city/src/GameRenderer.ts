@@ -35,6 +35,15 @@ import {
 } from './chunkDraw';
 import { prefersReducedMotion } from '@shell/chrome';
 import { SpriteFactory } from './sprites';
+import {
+  createTouchGesture,
+  resetTouchGesture,
+  touchDown,
+  touchMove,
+  touchUp,
+  type GestureAction,
+  type TouchGesture,
+} from './touchGestures';
 
 export { CHUNK_SIZE };
 /** Menu background camera: zoom, seconds per loop and loop radius as a fraction of the map. */
@@ -85,7 +94,7 @@ function highlightColors(theme: Theme) {
 }
 
 export interface RendererInput {
-  /** Called with tile coordinates (or null) on left-button events. */
+  /** Called with tile coordinates (or null) for a left click or a touch tap. */
   onPointer?(kind: 'down' | 'move' | 'up', tile: Point | null, event: PointerEvent): void;
   onHover?(tile: Point | null): void;
   onCamera?(): void;
@@ -116,6 +125,8 @@ export class GameRenderer {
   private highlightDirty = false;
   private input: RendererInput = {};
   private panning: { x: number; y: number } | null = null;
+  /** One-finger pan, pinch zoom and tap. Mouse and pen keep the button path below. */
+  private readonly touch: TouchGesture = createTouchGesture();
   private readonly listeners = new AbortController();
   private readonly keys = new Set<string>();
   /** Seconds into the menu camera loop, or null outside the menu. */
@@ -219,6 +230,7 @@ export class GameRenderer {
       this.attract = { time: 0, still: prefersReducedMotion() };
       this.keys.clear();
       this.panning = null;
+      resetTouchGesture(this.touch);
       this.setHover(null);
     } else {
       this.attract = null;
@@ -508,6 +520,11 @@ export class GameRenderer {
   private attachInput(canvas: HTMLCanvasElement): void {
     canvas.addEventListener('contextmenu', (e) => e.preventDefault());
     canvas.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'touch') {
+        canvas.setPointerCapture(e.pointerId);
+        this.applyTouch(touchDown(this.touch, e.pointerId, e.clientX, e.clientY), e);
+        return;
+      }
       canvas.setPointerCapture(e.pointerId);
       if (e.button === 1 || e.button === 2 || (e.button === 0 && this.keys.has(' '))) {
         this.panning = { x: e.clientX, y: e.clientY };
@@ -516,6 +533,10 @@ export class GameRenderer {
       if (e.button === 0) this.input.onPointer?.('down', this.pick(e.clientX, e.clientY), e);
     });
     canvas.addEventListener('pointermove', (e) => {
+      if (e.pointerType === 'touch') {
+        this.applyTouch(touchMove(this.touch, e.pointerId, e.clientX, e.clientY), e);
+        return;
+      }
       if (this.panning) {
         this.camera.pan(e.clientX - this.panning.x, e.clientY - this.panning.y);
         this.panning = { x: e.clientX, y: e.clientY };
@@ -527,6 +548,10 @@ export class GameRenderer {
       this.input.onPointer?.('move', tile, e);
     });
     const end = (e: PointerEvent) => {
+      if (e.pointerType === 'touch') {
+        this.applyTouch(touchUp(this.touch, e.pointerId, e.clientX, e.clientY, false), e);
+        return;
+      }
       if (this.panning) {
         this.panning = null;
         return;
@@ -534,7 +559,13 @@ export class GameRenderer {
       if (e.button === 0) this.input.onPointer?.('up', this.pick(e.clientX, e.clientY), e);
     };
     canvas.addEventListener('pointerup', end);
-    canvas.addEventListener('pointercancel', () => (this.panning = null));
+    canvas.addEventListener('pointercancel', (e) => {
+      if (e.pointerType === 'touch') {
+        this.applyTouch(touchUp(this.touch, e.pointerId, e.clientX, e.clientY, true), e);
+        return;
+      }
+      this.panning = null;
+    });
     canvas.addEventListener('pointerleave', () => this.setHover(null));
     canvas.addEventListener(
       'wheel',
@@ -569,6 +600,37 @@ export class GameRenderer {
     window.addEventListener('blur', () => this.keys.clear(), { signal });
   }
 
+  /** Touch only: one finger pans, two fingers pinch, a still lift taps. */
+  private applyTouch(action: GestureAction, event: PointerEvent): void {
+    if (action.kind === 'ignore') return;
+    if (action.kind === 'hover') {
+      const tile = this.pick(action.x, action.y);
+      this.setHover(tile);
+      this.input.onPointer?.('move', tile, event);
+      return;
+    }
+    if (action.kind === 'pan') {
+      this.setHover(null);
+      this.camera.pan(action.dx, action.dy);
+      this.input.onCamera?.();
+      return;
+    }
+    if (action.kind === 'pinch') {
+      this.setHover(null);
+      const rect = this.app.canvas.getBoundingClientRect();
+      if (action.dx !== 0 || action.dy !== 0) this.camera.pan(action.dx, action.dy);
+      if (action.factor !== 1) {
+        this.camera.zoomAt(action.factor, action.x - rect.left, action.y - rect.top);
+      }
+      this.input.onCamera?.();
+      return;
+    }
+    const tile = this.pick(action.x, action.y);
+    this.setHover(tile);
+    this.input.onPointer?.('down', tile, event);
+    this.input.onPointer?.('up', tile, event);
+  }
+
   private driftCamera(attract: { time: number; still: boolean }, world: World): void {
     if (!attract.still) attract.time += this.app.ticker.deltaMS / 1000;
     const angle = (ATTRACT_START + attract.time / ATTRACT_PERIOD_S) * Math.PI * 2;
@@ -600,4 +662,3 @@ export class GameRenderer {
     }
   }
 }
-

@@ -6,6 +6,8 @@
     -apple-system,
     sans-serif;
   font-size: 14px;
+  /* Measured from the HUD so the tool rail and panels sit under a wrapped bar. */
+  --hud-block: 52px;
   --panel: rgba(22, 30, 42, 0.92);
   --panel-border: #3a4a60;
   --text: #e8eef6;
@@ -56,7 +58,7 @@ button {
 .toolbar {
   position: absolute;
   left: 10px;
-  top: 64px;
+  top: calc(var(--hud-block) + 12px);
   bottom: 150px;
   display: flex;
   flex-direction: column;
@@ -141,7 +143,7 @@ button {
 
 .toasts {
   position: absolute;
-  top: 88px;
+  top: calc(var(--hud-block) + 36px);
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -325,15 +327,20 @@ input[type='range'] {
 
 /* Main menu */
 
-/* The live city is drawn on the canvas underneath; the gradient keeps the card readable. */
+/* The live city is drawn on the canvas underneath; the gradient keeps the card readable.
+   Spacers centre the card when it fits and collapse when it does not, so a short window
+   can scroll to the found-city button instead of clipping it. */
 .main-menu {
   position: absolute;
   inset: 0;
   z-index: 40;
-  display: grid;
-  place-items: center start;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 24px 24px 24px clamp(24px, 5vw, 72px);
+  touch-action: pan-y;
   background: linear-gradient(
     90deg,
     rgba(10, 16, 24, 0.86) 0%,
@@ -343,8 +350,17 @@ input[type='range'] {
   );
 }
 
+.main-menu::before,
+.main-menu::after {
+  content: '';
+  flex: 1 0 0;
+  min-height: 0;
+}
+
 .menu-card {
+  flex: 0 0 auto;
   width: min(460px, 100%);
+  max-width: 100%;
   padding: 28px 30px;
   background: rgba(18, 26, 38, 0.74);
   border: 1px solid rgba(90, 110, 140, 0.45);
@@ -492,7 +508,7 @@ input[type='range'] {
 /* Below the bar, mirroring the tool column on the left. */
 .city-audio {
   position: absolute;
-  top: 64px;
+  top: calc(var(--hud-block) + 12px);
   right: 10px;
   z-index: 10;
   display: flex;
@@ -502,9 +518,21 @@ input[type='range'] {
 
 @media (max-width: 720px) {
   .main-menu {
-    place-items: center;
+    align-items: center;
     padding: 16px;
     background: rgba(10, 16, 24, 0.6);
+  }
+}
+
+/* Phone landscape and other short windows: keep the title clear of the corner controls. */
+@media (max-height: 860px) {
+  .main-menu {
+    padding-top: 72px;
+    padding-bottom: 24px;
+  }
+
+  .main-menu::before {
+    flex: 0 0 0;
   }
 }
 
@@ -823,7 +851,7 @@ input[type='range'] {
 
 .paused-banner {
   position: absolute;
-  top: 60px;
+  top: calc(var(--hud-block) + 8px);
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -901,7 +929,7 @@ input[type='range'] {
 
 .side-panels {
   position: absolute;
-  top: 64px;
+  top: calc(var(--hud-block) + 12px);
   right: 10px;
   bottom: 52px;
   width: 340px;
@@ -1166,4 +1194,167 @@ input[type='range'] {
   display: flex;
   justify-content: flex-end;
   gap: 6px;
+}
+
+/* Narrow and tablet widths: wrap the bar so labels such as População stay on screen. */
+@media (max-width: 1100px) {
+  .hud {
+    height: auto;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 10px;
+    row-gap: 6px;
+    padding: 6px 8px 8px;
+  }
+
+  .hud-city {
+    min-width: 0;
+    flex: 1 1 7rem;
+  }
+
+  .hud-city strong,
+  .hud-city span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .hud-stat {
+    flex: 0 0 auto;
+    max-width: 100%;
+  }
+
+  .hud-label {
+    white-space: nowrap;
+  }
+
+  .speed-controls {
+    flex: 0 0 auto;
+  }
+
+  .hud-panels {
+    margin-left: 0;
+    flex: 1 1 100%;
+    flex-wrap: wrap;
+  }
+
+  .tutorial {
+    width: min(420px, calc(100vw - 24px));
+    min-width: 0;
+  }
+}
+
+/* Fingers need a 44px target. A mouse keeps the compact desktop sizes. */
+@media (pointer: coarse) {
+  button,
+  .locale-trigger,
+  input,
+  select {
+    touch-action: manipulation;
+  }
+
+  .button,
+  .locale-trigger,
+  .locale-menu button {
+    min-height: 44px;
+  }
+
+  .menu-sound,
+  .icon-button,
+  .tool-button {
+    width: 44px;
+    height: 44px;
+  }
+
+  .speed-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .tool-group {
+    grid-template-columns: repeat(2, 44px);
+    gap: 8px;
+  }
+
+  .toolbar {
+    gap: 8px;
+    padding: 8px;
+  }
+
+  input:not([type]),
+  input[type='text'],
+  input[type='search'],
+  input[type='number'],
+  select,
+  input[type='range'] {
+    min-height: 44px;
+  }
+
+  .check-row {
+    min-height: 44px;
+  }
+}
+
+/* Phone landscape: one scrolling row of tools instead of a packed column. */
+@media (max-height: 520px) {
+  .toolbar {
+    top: auto;
+    right: 8px;
+    bottom: 8px;
+    left: 8px;
+    flex-direction: row;
+    align-items: center;
+    width: auto;
+    height: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .tool-group {
+    display: flex;
+    flex: none;
+    flex-direction: row;
+    border-bottom: none;
+    padding-bottom: 0;
+    border-right: 1px solid var(--panel-border);
+    padding-right: 8px;
+  }
+
+  .tool-group:last-child {
+    border-right: none;
+    padding-right: 0;
+  }
+
+  .tool-button {
+    flex: none;
+  }
+
+  .minimap {
+    left: auto;
+    right: 8px;
+    bottom: 76px;
+    width: 148px;
+    height: 76px;
+  }
+
+  .minimap canvas {
+    width: 148px;
+    height: 76px;
+  }
+
+  .side-panels,
+  .tutorial {
+    bottom: 76px;
+  }
+
+  .readout {
+    right: auto;
+    left: 8px;
+    bottom: 76px;
+  }
+
+  .tutorial {
+    width: min(420px, calc(100vw - 24px));
+    min-width: 0;
+  }
 }

@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
+import { de } from '../../apps/web/src/i18n/de';
+import { en } from '../../apps/web/src/i18n/en';
+import { es } from '../../apps/web/src/i18n/es';
+import { fr } from '../../apps/web/src/i18n/fr';
+import { ptBR } from '../../apps/web/src/i18n/pt-BR';
 import { matchLocale, resolveLocale } from '../../apps/web/src/i18n';
+
+const CATALOGS = [en, ptBR, es, fr, de];
+const SHORTCUT = /\([A-Za-z0-9]\)/;
 
 describe('resolveLocale', () => {
   it('keeps a stored catalog code', () => {
@@ -23,6 +31,22 @@ describe('resolveLocale', () => {
   it('ignores an invalid stored key and uses the browser list', () => {
     expect(resolveLocale({ stored: 'xx', languages: ['fr-FR'] })).toBe('fr');
     expect(resolveLocale({ stored: 'portuguese', languages: ['ja'] })).toBe('en');
+  });
+});
+
+describe('touch copy', () => {
+  it('describes gestures and leaves keyboard shortcuts out', () => {
+    for (const catalog of CATALOGS) {
+      expect(catalog.system.helpTouch).not.toMatch(SHORTCUT);
+      expect(catalog.hud.pausedHintTouch).not.toMatch(SHORTCUT);
+      for (const step of catalog.tutorial.steps) {
+        expect(step.touch.length).toBeGreaterThan(0);
+        expect(step.touch).not.toMatch(SHORTCUT);
+      }
+    }
+    expect(ptBR.tutorial.steps[0]?.touch).toMatch(/um dedo/);
+    expect(ptBR.tutorial.steps[0]?.touch).toMatch(/zoom/);
+    expect(en.tutorial.steps[0]?.text).toMatch(/mouse wheel/);
   });
 });
 
