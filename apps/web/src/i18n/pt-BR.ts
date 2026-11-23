@@ -88,11 +88,14 @@ export const ptBR = {
       'Na costa, com estrada. Empregos industriais, valoriza a orla e liga a cidade à região.',
     airport:
       'Área plana 4×4, com estrada. Empregos comerciais e ligação regional, mas o ruído desvaloriza o entorno.',
-    substation: 'Coloque ao lado de linhas de energia. Alimenta o componente da rede; um distrito sobrecarregado pode entrar em cascata.',
+    substation:
+      'Coloque ao lado de linhas de energia. Alimenta o componente da rede; um distrito sobrecarregado pode entrar em cascata.',
     battery: 'Amortece o distrito durante um blecaute e recarrega enquanto a rede esta estavel.',
     firewall: 'Cobre um raio de 6 lotes. Precisa de energia e de um link de dados.',
-    dronePort: 'Precisa de estrada e de um link de dados. As rotas de drones aliviam o congestionamento nas ruas proximas.',
-    corpHQ: 'Precisa de estrada. Megacorporacoes compram lotes ociosos ao redor e distorcem o valor da terra.',
+    dronePort:
+      'Precisa de estrada e de um link de dados. As rotas de drones aliviam o congestionamento nas ruas proximas.',
+    corpHQ:
+      'Precisa de estrada. Megacorporacoes compram lotes ociosos ao redor e distorcem o valor da terra.',
     datacenter: 'Fornece banda. A capacidade cheia precisa de energia e de agua para resfriar.',
     edgeNode: 'Uma fonte pequena de banda. Precisa de energia, nao de agua.',
   } satisfies Record<ToolId, string>,
@@ -322,6 +325,7 @@ export const ptBR = {
     unlockAt: (population: string) => `Desbloqueia com ${population} hab.`,
     paused: 'Pausado',
     pausedHint: 'P ou ▶ para continuar',
+    pausedHintTouch: '▶ para continuar',
     bankrupt: 'FALIDA',
     debt: 'Em dívida',
     fires: (n: number) => `${n} ${n === 1 ? 'foco de incêndio' : 'focos de incêndio'}`,
@@ -417,30 +421,44 @@ export const ptBR = {
       {
         title: 'Bem-vindo, prefeito!',
         text: 'Arraste com o botão direito para mover a câmera e use a roda do mouse para o zoom. Vamos fundar a cidade.',
+        touch:
+          'Arraste com um dedo para mover a câmera e junte dois dedos para o zoom. Toque um lote para construir ou inspecionar.',
       },
       {
         title: 'Uma estrada até a borda',
         text: 'Escolha Estrada (R) e trace uma via que toque a borda do mapa: ela traz trabalhadores e empregos da região.',
+        touch:
+          'Escolha Estrada e toque os lotes para traçar uma via que toque a borda do mapa: ela traz trabalhadores e empregos da região.',
       },
       {
         title: 'Zonas residenciais',
         text: 'Escolha Residencial (1) e arraste um retângulo junto à estrada. Lotes a até 3 casas de uma via podem crescer.',
+        touch:
+          'Escolha Residencial e toque os lotes junto à estrada. Lotes a até 3 casas de uma via podem crescer.',
       },
       {
         title: 'Empregos',
         text: 'Crie zonas industriais (5) e comerciais (3) também perto da estrada, mas não colados às casas.',
+        touch:
+          'Crie zonas industriais e comerciais também perto da estrada, mas não coladas às casas.',
       },
       {
         title: 'Energia',
         text: 'Coloque uma usina e ligue-a às zonas com Linha de energia (E). Zonas vizinhas conduzem energia entre si.',
+        touch:
+          'Coloque uma usina e ligue-a às zonas com Linha de energia. Zonas vizinhas conduzem energia entre si.',
       },
       {
         title: 'Deixe a cidade crescer',
         text: 'Despause (P) e acompanhe as barras de demanda no topo. Os primeiros moradores chegam em poucos meses.',
+        touch:
+          'Aperte o play e acompanhe as barras de demanda no topo. Os primeiros moradores chegam em poucos meses.',
       },
       {
         title: 'Cuide do orçamento',
         text: 'Abra o Orçamento para ajustar impostos e gastos. Use Inspecionar (Q) em um lote para ver por que ele não cresce.',
+        touch:
+          'Abra o Orçamento para ajustar impostos e gastos. Use Inspecionar em um lote para ver por que ele não cresce.',
       },
     ],
   },
@@ -478,5 +496,7 @@ export const ptBR = {
     music: 'Música ambiente',
     animations: 'Animações (carros, fumaça, água)',
     help: 'Atalhos: Q inspecionar · R estrada · 1–6 zonas · 0 remover zona · E energia · T água · B demolir · N nivelar · H elevar · F árvores · P pausa · M som · U subterrâneo · G grade · Esc cancelar',
+    helpTouch:
+      'Arraste com um dedo para mover o mapa. Junte dois dedos para o zoom. Toque para construir ou inspecionar.',
   },
 } satisfies Strings;

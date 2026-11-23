@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { useStrings } from '../i18n';
 import type { GameSession } from '../state/session';
 import { useStore } from '../state/store';
+import { useCoarsePointer } from './coarsePointer';
 import { LocaleSelect } from './LocaleSelect';
 import { Panel } from './Panel';
 
@@ -16,6 +17,7 @@ export function SystemPanel({ session, children }: { session: GameSession; child
   const music = useStore(session.ui, (s) => s.music);
   const animations = useStore(session.ui, (s) => s.animations);
   const disastersEnabled = useStore(session.ui, (s) => s.stats?.disastersEnabled ?? true);
+  const coarse = useCoarsePointer();
   const s = t.system;
   const trigger = async (disaster: DisasterKind) => {
     const result = await session.client.command({ type: 'triggerDisaster', disaster });
@@ -99,7 +101,7 @@ export function SystemPanel({ session, children }: { session: GameSession; child
         />
         {s.animations}
       </label>
-      <p className="muted small">{s.help}</p>
+      <p className="muted small">{coarse ? s.helpTouch : s.help}</p>
       <button
         type="button"
         className="button"

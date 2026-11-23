@@ -84,10 +84,12 @@ export const en = {
     school: 'Raises education and land value.',
     hospital: 'Raises health and land value.',
     park: 'Raises nearby land value and cuts pollution.',
-    marina: 'On the coast, with a road. Industrial jobs, raises the waterfront and links the city to the region.',
+    marina:
+      'On the coast, with a road. Industrial jobs, raises the waterfront and links the city to the region.',
     airport:
       'Flat 4×4 area, with a road. Commercial jobs and a regional link, but the noise lowers nearby land value.',
-    substation: 'Place beside power lines. Feeds its grid component; an overloaded district can cascade.',
+    substation:
+      'Place beside power lines. Feeds its grid component; an overloaded district can cascade.',
     battery: 'Buffers the district during a brownout and recharges while the grid is stable.',
     firewall: 'Covers a 6-lot radius. Needs power and a data link.',
     dronePort: 'Needs a road and a data link. Drone lanes relieve congestion on nearby streets.',
@@ -284,7 +286,8 @@ export const en = {
     delete: 'Delete',
     confirmDelete: (name: string) => `Delete the save "${name}"?`,
     autosave: 'Autosave',
-    autosaveHint: 'The city is saved automatically every minute of play and when you return to the menu.',
+    autosaveHint:
+      'The city is saved automatically every minute of play and when you return to the menu.',
     saved: 'City saved.',
     loaded: (name: string) => `${name} loaded.`,
     migrated: (version: number) => `Save from version ${version} converted to the current version.`,
@@ -320,6 +323,7 @@ export const en = {
     unlockAt: (population: string) => `Unlocks at ${population} pop.`,
     paused: 'Paused',
     pausedHint: 'P or ▶ to continue',
+    pausedHintTouch: '▶ to continue',
     bankrupt: 'BANKRUPT',
     debt: 'In debt',
     fires: (n: number) => `${n} ${n === 1 ? 'fire' : 'fires'}`,
@@ -415,30 +419,44 @@ export const en = {
       {
         title: 'Welcome, mayor!',
         text: 'Right-drag to move the camera and use the mouse wheel to zoom. Let’s found the city.',
+        touch:
+          'Drag with one finger to move the camera and pinch with two fingers to zoom. Tap a lot to place or inspect.',
       },
       {
         title: 'A road to the edge',
         text: 'Pick Road (R) and draw a street that touches the map edge: it brings regional workers and jobs.',
+        touch:
+          'Pick Road and tap lots to draw a street that touches the map edge: it brings regional workers and jobs.',
       },
       {
         title: 'Residential zones',
         text: 'Pick Residential (1) and drag a rectangle along the road. Lots within 3 tiles of a street can grow.',
+        touch:
+          'Pick Residential and tap lots along the road. Lots within 3 tiles of a street can grow.',
       },
       {
         title: 'Jobs',
         text: 'Add industrial (5) and commercial (3) zones near the road too, but not right against the homes.',
+        touch:
+          'Add industrial and commercial zones near the road too, but not right against the homes.',
       },
       {
         title: 'Power',
         text: 'Place a plant and connect it to the zones with Power line (E). Neighbouring zones carry power to each other.',
+        touch:
+          'Place a plant and connect it to the zones with Power line. Neighbouring zones carry power to each other.',
       },
       {
         title: 'Let the city grow',
         text: 'Unpause (P) and watch the demand bars at the top. The first residents arrive in a few months.',
+        touch:
+          'Press play and watch the demand bars at the top. The first residents arrive in a few months.',
       },
       {
         title: 'Watch the budget',
         text: 'Open Budget to adjust taxes and spending. Use Inspect (Q) on a lot to see why it is not growing.',
+        touch:
+          'Open Budget to adjust taxes and spending. Use Inspect on a lot to see why it is not growing.',
       },
     ],
   },
@@ -453,7 +471,8 @@ export const en = {
     disasterEnded: (name: string) => `${name}: situation back to normal.`,
     brownout: 'Not enough power! Build more plants.',
     waterShortage: 'Water shortage! Build more pumps.',
-    debt: (months: number) => `The treasury has been in the red for ${months} ${months === 1 ? 'month' : 'months'}.`,
+    debt: (months: number) =>
+      `The treasury has been in the red for ${months} ${months === 1 ? 'month' : 'months'}.`,
     bankrupt: 'The city went bankrupt! Raise taxes and cut spending to recover.',
     recovered: 'City finances have recovered.',
     milestone: (population: string) => `Milestone: ${population} residents!`,
@@ -476,6 +495,7 @@ export const en = {
     music: 'Background music',
     animations: 'Animations (cars, smoke, water)',
     help: 'Shortcuts: Q inspect · R road · 1–6 zones · 0 dezone · E power · T water · B demolish · N flatten · H raise · F trees · P pause · M sound · U underground · G grid · Esc cancel',
+    helpTouch: 'Drag with one finger to move the map. Pinch to zoom. Tap to place or inspect.',
   },
 };
 

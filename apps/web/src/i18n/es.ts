@@ -87,11 +87,14 @@ export const es = {
       'En la costa, con carretera. Empleo industrial, revaloriza el litoral y une la ciudad a la región.',
     airport:
       'Área plana 4×4, con carretera. Empleo comercial y enlace regional, pero el ruido devalúa el entorno.',
-    substation: 'Colocalo junto a lineas electricas. Alimenta su componente de red; un distrito sobrecargado puede caer en cascada.',
+    substation:
+      'Colocalo junto a lineas electricas. Alimenta su componente de red; un distrito sobrecargado puede caer en cascada.',
     battery: 'Amortigua el distrito durante un apagon y se recarga mientras la red es estable.',
     firewall: 'Cubre un radio de 6 solares. Necesita energía y un enlace de datos.',
-    dronePort: 'Necesita carretera y un enlace de datos. Las rutas de drones alivian la congestion de las calles cercanas.',
-    corpHQ: 'Necesita carretera. Las megacorporaciones compran solares ociosos alrededor y distorsionan el valor del suelo.',
+    dronePort:
+      'Necesita carretera y un enlace de datos. Las rutas de drones alivian la congestion de las calles cercanas.',
+    corpHQ:
+      'Necesita carretera. Las megacorporaciones compran solares ociosos alrededor y distorsionan el valor del suelo.',
     datacenter: 'Aporta ancho de banda. La capacidad plena necesita energía y agua para enfriar.',
     edgeNode: 'Una fuente pequeña de banda. Necesita energía, no agua.',
   } satisfies Record<ToolId, string>,
@@ -287,11 +290,14 @@ export const es = {
     autosaveHint: 'La ciudad se guarda automáticamente cada minuto de juego y al volver al menú.',
     saved: 'Ciudad guardada.',
     loaded: (name: string) => `${name} cargada.`,
-    migrated: (version: number) => `Partida de la versión ${version} convertida a la versión actual.`,
+    migrated: (version: number) =>
+      `Partida de la versión ${version} convertida a la versión actual.`,
     exported: 'Archivo exportado.',
     slotInfo: (population: string, funds: string) => `${population} hab. · ${funds}`,
-    quota: 'No hay espacio para guardar. Elimina partidas antiguas o exporta la ciudad a un archivo.',
-    unavailable: 'El almacenamiento del navegador no está disponible (¿modo privado?). Usa Exportar archivo.',
+    quota:
+      'No hay espacio para guardar. Elimina partidas antiguas o exporta la ciudad a un archivo.',
+    unavailable:
+      'El almacenamiento del navegador no está disponible (¿modo privado?). Usa Exportar archivo.',
     missing: 'No se encontraron los datos de esta partida. Se quitó de la lista.',
     failed: 'No se pudo guardar la ciudad.',
     loadFailed: 'No se pudo cargar la ciudad:',
@@ -320,6 +326,7 @@ export const es = {
     unlockAt: (population: string) => `Se desbloquea con ${population} hab.`,
     paused: 'En pausa',
     pausedHint: 'P o ▶ para continuar',
+    pausedHintTouch: '▶ para continuar',
     bankrupt: 'EN QUIEBRA',
     debt: 'En deuda',
     fires: (n: number) => `${n} ${n === 1 ? 'incendio' : 'incendios'}`,
@@ -415,30 +422,44 @@ export const es = {
       {
         title: '¡Bienvenido, alcalde!',
         text: 'Arrastra con el botón derecho para mover la cámara y usa la rueda del ratón para el zoom. Vamos a fundar la ciudad.',
+        touch:
+          'Arrastra con un dedo para mover la cámara y pellizca con dos dedos para el zoom. Toca un lote para construir o inspeccionar.',
       },
       {
         title: 'Una carretera hasta el borde',
         text: 'Elige Carretera (R) y traza una vía que toque el borde del mapa: trae trabajadores y empleos de la región.',
+        touch:
+          'Elige Carretera y toca los lotes para trazar una vía que toque el borde del mapa: trae trabajadores y empleos de la región.',
       },
       {
         title: 'Zonas residenciales',
         text: 'Elige Residencial (1) y arrastra un rectángulo junto a la carretera. Los lotes a hasta 3 casas de una vía pueden crecer.',
+        touch:
+          'Elige Residencial y toca los lotes junto a la carretera. Los lotes a hasta 3 casas de una vía pueden crecer.',
       },
       {
         title: 'Empleos',
         text: 'Crea zonas industriales (5) y comerciales (3) cerca de la carretera, pero no pegadas a las casas.',
+        touch:
+          'Crea zonas industriales y comerciales cerca de la carretera, pero no pegadas a las casas.',
       },
       {
         title: 'Energía',
         text: 'Coloca una central y conéctala a las zonas con Línea eléctrica (E). Las zonas vecinas se pasan la energía.',
+        touch:
+          'Coloca una central y conéctala a las zonas con Línea eléctrica. Las zonas vecinas se pasan la energía.',
       },
       {
         title: 'Deja que la ciudad crezca',
         text: 'Quita la pausa (P) y observa las barras de demanda arriba. Los primeros vecinos llegan en pocos meses.',
+        touch:
+          'Pulsa play y observa las barras de demanda arriba. Los primeros vecinos llegan en pocos meses.',
       },
       {
         title: 'Cuida el presupuesto',
         text: 'Abre Presupuesto para ajustar impuestos y gastos. Usa Inspeccionar (Q) en un lote para ver por qué no crece.',
+        touch:
+          'Abre Presupuesto para ajustar impuestos y gastos. Usa Inspeccionar en un lote para ver por qué no crece.',
       },
     ],
   },
@@ -453,7 +474,8 @@ export const es = {
     disasterEnded: (name: string) => `${name}: situación normalizada.`,
     brownout: '¡Energía insuficiente! Construye más centrales.',
     waterShortage: '¡Falta agua! Construye más bombas.',
-    debt: (months: number) => `Las arcas llevan ${months} ${months === 1 ? 'mes' : 'meses'} en números rojos.`,
+    debt: (months: number) =>
+      `Las arcas llevan ${months} ${months === 1 ? 'mes' : 'meses'} en números rojos.`,
     bankrupt: '¡La ciudad quebró! Ajusta impuestos y gastos para recuperar la caja.',
     recovered: 'Las finanzas de la ciudad se han recuperado.',
     milestone: (population: string) => `Hito alcanzado: ¡${population} habitantes!`,
@@ -476,5 +498,7 @@ export const es = {
     music: 'Música de ambiente',
     animations: 'Animaciones (coches, humo, agua)',
     help: 'Atajos: Q inspeccionar · R carretera · 1–6 zonas · 0 quitar zona · E energía · T agua · B demoler · N allanar · H elevar · F árboles · P pausa · M sonido · U subterráneo · G cuadrícula · Esc cancelar',
+    helpTouch:
+      'Arrastra con un dedo para mover el mapa. Pellizca para el zoom. Toca para construir o inspeccionar.',
   },
 } satisfies Strings;

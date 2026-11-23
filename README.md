@@ -111,6 +111,10 @@ Code and docs stay in English.
 | Underground / grid                       | `U` / `G`       |
 | Cancel the current tool or close a panel | `Esc`           |
 
+With a mouse, drag with the right or middle button (or the left button while Space is held) to
+move the camera, and use the wheel to zoom. On a touch screen, drag with one finger to move the
+camera, pinch with two fingers to zoom, and tap to place or inspect.
+
 The Menu lists every shortcut, including the drone port, the firewall and the corporation
 headquarters. Cities autosave in the browser; export and import `.neon.json` to keep a
 portable copy.

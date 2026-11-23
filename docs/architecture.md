@@ -120,6 +120,10 @@ flowchart LR
 Only one floating panel is open at a time; the inspector stacks above it in the right column.
 `Esc` closes the panel first, then cancels the tool and clears the selection.
 
+A mouse pans with the right button, the middle button, or the left button while Space is held,
+and zooms with the wheel. A touch screen pans with one finger, zooms by pinching, and places or
+inspects on tap. Pointer-coarse layouts use gesture copy and drop keyboard shortcut hints.
+
 **Boot and menu background.** `index.html` carries a static splash (logo and "Carregando…")
 inside `#root`, so something shows before the bundle runs; React replaces it with the boot
 screen, which looks the same plus a step label and a progress bar. `GameSession.boot()` goes
